@@ -12,3 +12,10 @@
 ## Userland (later)
 - [ ] Define tessera syscall ABI
 - [ ] Port oxinit (enderman-claude/oxinit) as PID 1 after syscall layer and GNAT runtime work
+
+## Layers (see docs/spec/layers.md)
+- [ ] Kernel loader: start a SHARD image at user privilege
+- [ ] Syscall entry and minimal table (exit, console write)
+- [ ] IPC between two user programs
+- [ ] Driver space: load a driver with a grant; deliver an interrupt
+- [ ] User-space services that own device policy

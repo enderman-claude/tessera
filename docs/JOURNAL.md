@@ -26,3 +26,7 @@ Newest entries first.
 - Open: menuconfig. kconfiglib installed (pip). Kconfig files for units are not written yet.
 - Paused to build the SHARD binary format in its own repo (enderman-claude/shard) and
   add it to tesseraOS as lib/shard. Kernel loader integration is the next step.
+
+## Session 5
+- Wrote docs/spec/layers.md: kernel space, driver space, user space, their privilege levels, the rules between them, and the build order.
+- Decided drivers run as separate programs (ring 3) with explicit hardware grants, not in the kernel.

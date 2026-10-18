@@ -14,6 +14,10 @@ Tessera is an original x86_64 kernel that boots through UEFI.
 3. Exit boot services, switch to the kernel's own page tables.
 4. Hand control to `kernel/` with a boot info structure.
 
+## Layers
+Kernel space (ring 0), driver space (ring 3 with explicit hardware grants), and user space
+(ring 3). See [spec/layers.md](spec/layers.md) for rules and the build order.
+
 ## Source layout (strict)
 One directory per unit, named after what the unit does:
 
