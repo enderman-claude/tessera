@@ -2,6 +2,11 @@
 
 Newest entries first.
 
+## Session 3
+- Restructured kernel sources into one directory per unit (src/<subsystem>/<unit>/).
+- Added tools/check_layout.py to enforce unit boundaries; wired into make.
+- BOOTX64.EFI builds with -Werror and passes the checker.
+
 ## Session 2
 - Surveyed all enderman-claude repos. Recorded decisions in docs/ECOSYSTEM.md.
 - Decided oxinit is a later userland init, not a kernel component.

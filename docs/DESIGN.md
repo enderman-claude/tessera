@@ -14,9 +14,20 @@ Tessera is an original x86_64 kernel that boots through UEFI.
 3. Exit boot services, switch to the kernel's own page tables.
 4. Hand control to `kernel/` with a boot info structure.
 
-## Layout
-- `boot/`        UEFI entry point and handoff
-- `kernel/`      core: memory, scheduling, interrupts
-- `lib/`         freestanding helpers (string, printf-style formatting)
-- `third_party/` submodules of external projects (not modified)
-- `docs/`        design notes, roadmap, journal, ecosystem survey
+## Source layout (strict)
+One directory per unit, named after what the unit does:
+
+    src/<subsystem>/<unit>/<unit>.c       implementation
+    src/<subsystem>/<unit>/DEPS           optional: public headers it may include
+    include/tessera/<subsystem>/<unit>.h  the only public interface of a unit
+
+Subsystems so far: boot, console, memory, scheduler. Units so far: efi_entry,
+serial_putc, bitmap_alloc, sort_priorities, pick_next.
+
+Rules, enforced by `tools/check_layout.py` (run by `make`):
+1. Each unit has exactly one `<unit>.c` and one public header.
+2. A unit includes only its own header, standard headers, and headers in DEPS.
+3. Units never reach into each other's directories, only through public headers.
+4. No source file exceeds 150 lines.
+
+Third-party code is never placed here; it is a submodule under `third_party/`.
