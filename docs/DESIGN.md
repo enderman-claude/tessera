@@ -19,4 +19,4 @@ Tessera is an original x86_64 kernel that boots through UEFI.
 - `kernel/`      core: memory, scheduling, interrupts
 - `lib/`         freestanding helpers (string, printf-style formatting)
 - `third_party/` submodules of external projects (not modified)
-- `docs/`        design notes, roadmap, journal
+- `docs/`        design notes, roadmap, journal, ecosystem survey

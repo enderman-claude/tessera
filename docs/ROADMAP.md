@@ -7,4 +7,8 @@
 - [ ] `kernel/`: physical page allocator from the memory map
 - [ ] `kernel/`: paging and higher-half mapping
 - [ ] `kernel/`: timer interrupt and a minimal scheduler
-- [ ] `third_party/zstd`: decide whether kernel needs it (freestanding build)
+- [ ] `third_party/zstd`: freestanding shim so the boot stub can use it
+
+## Userland (later)
+- [ ] Define tessera syscall ABI
+- [ ] Port oxinit (enderman-claude/oxinit) as PID 1 after syscall layer and GNAT runtime work

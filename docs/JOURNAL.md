@@ -2,6 +2,10 @@
 
 Newest entries first.
 
+## Session 2
+- Surveyed all enderman-claude repos. Recorded decisions in docs/ECOSYSTEM.md.
+- Decided oxinit is a later userland init, not a kernel component.
+
 ## Session 1
 - Created repo enderman-claude/tessera.
 - Checked toolchain: gcc and ld are present; no mingw, QEMU, or OVMF.
