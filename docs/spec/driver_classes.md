@@ -14,7 +14,7 @@ cannot ask for a stronger class at runtime.
 - Data-path registers belong to the device. A D1 or D2 driver may write them directly.
 - Configuration registers belong to the kernel. PCI config space, bridge windows, BAR
   placement, bus-master enable of other functions, and interrupt controller routing are
-  never written by a driver. Only L3 (device manager) asks the kernel to change them, and
+  never written by a driver. Only L4 (device manager) asks the kernel to change them, and
   the kernel does the write after checking the request.
 
 This is why direct drivers can be fast without being able to move another device's
@@ -28,7 +28,7 @@ memory window or steer interrupts elsewhere.
 - Slowest, but each access is checked and audited. Default class for anything new.
 
 ## Class D1: direct
-Granted at load time by L2 from L3's manifest:
+Granted at load time by L2 from L4's manifest:
 - `bar(fn, n)`: read/write mapping of BAR n of exactly one function. Mapped by the kernel,
   then used by the driver with plain loads and stores.
 - `msi(fn, count)`: the kernel programs this function's MSI or MSI-X table to deliver up to
@@ -48,7 +48,7 @@ Everything in D1 for the controller function, plus:
   config space and reports children. The controller driver never reads config space
   itself.
 - `delegate(child)`: may create a child capability (D1 or D0) for a child it discovered,
-  as a weaker copy only. The child driver is then loaded by L3, not by the controller.
+  as a weaker copy only. The child driver is then loaded by L4, not by the controller.
 
 A bus controller cannot change its own upstream bridge, and cannot grant itself more
 than its controller's BAR and DMA domain.
@@ -60,12 +60,12 @@ than its controller's BAR and DMA domain.
    a device can forge interrupts for another device. Default: refuse.
 3. A D0 manifest that lists `bar`, `msi`, or `dma` is rejected. The class is checked, not
    trusted from the manifest's wording.
-4. A class change requires a new manifest signed by L3 and a restart of the driver.
+4. A class change requires a new manifest signed by L4 and a restart of the driver.
 
 ## What happens on violation
 - An attempted forbidden access (wrong BAR, config write, port I/O from D1) returns an
   error and is written to the audit log with the driver's class.
-- Repeated violations past a limit set by L3 stop the driver. L3 may restart it in
+- Repeated violations past a limit set by L4 stop the driver. L4 may restart it in
   class D0 only, if the manifest provides a D0 fallback.
 
 ## Open

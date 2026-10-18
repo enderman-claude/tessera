@@ -40,3 +40,8 @@ Newest entries first.
 - Added driver classes (docs/spec/driver_classes.md): D0 mediated, D1 direct (own device BAR, MSI, IOMMU DMA), D2 bus controller (adds enumeration and child delegation).
 - Rule: data-path registers belong to the device and may be written directly; config registers belong to the kernel and are never written by drivers.
 - Loader refuses D1/D2 without an IOMMU or interrupt remapping. Open: IOMMU-required targets.
+
+## Session 8
+- Added L3 kernel modules: ring-0 extensions, built-in or loadable during boot, not drivers and not services. See docs/spec/kernel_modules.md.
+- Renumbered layers to nine (L0 to L8). Updated capabilities, driver classes and roadmap references.
+- Module rules: imports are an explicit list checked by the loader, no capabilities of their own, trusted and part of the TCB, no unload in v1.

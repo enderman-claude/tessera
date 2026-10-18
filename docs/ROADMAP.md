@@ -16,7 +16,13 @@
 ## Layers (see docs/spec/layers.md)
 - [ ] L1: paging, traps, timer
 - [ ] L2: capability table, SHARD loader that installs manifest capabilities, syscall dispatch
-- [ ] L3: supervisor starts one L7 program and reports its exit
-- [ ] L4: serial driver (D0) through kernel calls, via IPC
-- [ ] L5: D1 driver with BAR and MSI only, then DMA after the IOMMU path works on hardware
-- [ ] L5: D2 bus controller enumerates children through the kernel
+- [ ] L4: supervisor starts one L8 program and reports its exit
+- [ ] L5: serial driver (D0) through kernel calls, via IPC
+- [ ] L6: D1 driver with BAR and MSI only, then DMA after the IOMMU path works on hardware
+- [ ] L6: D2 bus controller enumerates children through the kernel
+
+## Kernel modules (see docs/spec/kernel_modules.md)
+- [ ] Module manifest and init-order resolution (host test)
+- [ ] Built-in module list, initialized in order
+- [ ] Export table: log, console write, timer read
+- [ ] One loadable module from boot media, loaded before L4

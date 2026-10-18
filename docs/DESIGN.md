@@ -15,7 +15,7 @@ Tessera is an original x86_64 kernel that boots through UEFI.
 4. Hand control to `kernel/` with a boot info structure.
 
 ## Layers
-Eight layers, L0 (firmware boundary) to L7 (applications). Access is granted by capabilities, not by ring alone.
+Nine layers, L0 (firmware boundary) to L8 (applications). Access is granted by capabilities, not by ring alone.
 See [spec/layers.md](spec/layers.md) and [spec/capabilities.md](spec/capabilities.md).
 
 ## Source layout (strict)
