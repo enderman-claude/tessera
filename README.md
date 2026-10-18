@@ -1,5 +1,10 @@
 # tessera
 
-An original x86_64 UEFI kernel. Components live in submodules.
+An original x86_64 UEFI kernel. Documentation lives in [`docs/`](docs/):
 
-Status: boot stub builds to a PE32+ EFI application. Kernel not yet functional.
+- [Design](docs/DESIGN.md)
+- [Roadmap](docs/ROADMAP.md)
+- [Journal](docs/JOURNAL.md)
+
+Components are split across directories; external projects are submodules under
+`third_party/`.
