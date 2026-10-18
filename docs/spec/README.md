@@ -13,4 +13,5 @@ does not do. Code comes after the spec for that subsystem is written.
 | [memory.md](memory.md) | draft, not yet coded |
 | [scheduler.md](scheduler.md) | draft, not yet coded |
 | [layers.md](layers.md) | draft: eight layers, L0 to L7 |
+| [driver_classes.md](driver_classes.md) | draft: D0 mediated, D1 direct, D2 bus controller |
 | [capabilities.md](capabilities.md) | draft: what a layer may reach, and how it is granted |

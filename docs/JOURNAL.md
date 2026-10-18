@@ -35,3 +35,8 @@ Newest entries first.
 - Replaced the three-layer plan with eight layers (L0 firmware boundary to L7 applications).
 - Removed driver-space defaults that were too permissive: DMA needs an IOMMU domain (refused otherwise), port I/O is limited to a per-port grant, and there is no trusted-without-IOMMU mode.
 - Added docs/spec/capabilities.md: capability kinds, syscall groups, delegation (weaker only), revocation, and the enforcement point in L2.
+
+## Session 7
+- Added driver classes (docs/spec/driver_classes.md): D0 mediated, D1 direct (own device BAR, MSI, IOMMU DMA), D2 bus controller (adds enumeration and child delegation).
+- Rule: data-path registers belong to the device and may be written directly; config registers belong to the kernel and are never written by drivers.
+- Loader refuses D1/D2 without an IOMMU or interrupt remapping. Open: IOMMU-required targets.

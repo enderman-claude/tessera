@@ -10,8 +10,8 @@ Calls upward are replies, never requests (interrupts and IPC replies excepted; s
 | L1 | Kernel core | ring 0 | always | page tables, context switch, trap and syscall entry, timer tick |
 | L2 | Kernel services | ring 0 | always | capability table, IPC, SHARD loader, syscall dispatch, interrupt routing |
 | L3 | System services | ring 3, trusted | always | device manager, supervisor (starts everything), resource broker |
-| L4 | Driver tier A | ring 3, device-only | while device is bound | MMIO and IRQ capabilities for one device |
-| L5 | Driver tier B | ring 3, DMA-capable | while device is bound | everything in A, plus a DMA capability bound to an IOMMU domain |
+| L4 | Mediated drivers (D0) | ring 3 | while device is bound | no hardware capabilities; every hardware action is a validated kernel call |
+| L5 | Direct drivers (D1, D2) | ring 3 | while device is bound | BAR, MSI and optional DMA for one device; bus controllers also enumerate children |
 | L6 | User services | ring 3, unprivileged | always | filesystem, network, display, etc.; reach hardware only through L4/L5 IPC |
 | L7 | Applications | ring 3, sandboxed | per process | a minimal capability set chosen by the supervisor |
 
@@ -35,21 +35,15 @@ gets which capabilities at start. The resource broker hands out memory and CPU b
 L3 can crash and be restarted; the kernel does not depend on it staying up except for
 device binding.
 
-**L4 Driver tier A.** A driver for one device. It may:
-- map the MMIO ranges it was granted (BAR regions, read/write as granted)
-- receive its IRQ as a message
-- use the IPC endpoints it was granted
-- use I/O ports only if the grant lists them, enforced by the per-process port bitmap
+**L4 Mediated drivers (class D0).** Hold no bus capabilities. Timers, interrupt controller,
+serial, PCI configuration reads and allowlisted writes, power, platform devices. Each
+hardware action is a kernel call that the kernel checks. Slowest, and the default class.
 
-It may not: allocate DMA, change page tables, create processes, or touch any device other
-than the one it was bound to.
-
-**L5 Driver tier B.** Same as A, and in addition may program DMA, but only through a DMA
-capability tied to an IOMMU domain that restricts the device to the buffers the driver
-was given. If the machine has no IOMMU, the loader refuses to bind a tier B driver.
-There is no "trusted without IOMMU" mode in the default policy. A developer build may
-enable an `unsafe-dma` policy, which is recorded in the boot log and cannot be set by a
-program.
+**L5 Direct drivers (classes D1 and D2).** Own one device function. They may use the BAR
+mappings, MSI vectors, and DMA window they were granted, and write their own device's
+data-path registers directly. They may not write config space, change BAR placement,
+use port I/O, or touch other devices. A bus controller (D2) may also enumerate and
+delegate its children. See [driver_classes.md](driver_classes.md).
 
 **L6 User services.** No hardware capabilities at all. A service asks a driver to do
 hardware work through IPC. The supervisor grants a service the endpoints it needs and
@@ -68,7 +62,8 @@ supervisor names. No driver endpoints unless the supervisor grants them.
 5. A faulting program at any layer is stopped and reported. A faulting driver or service
    is restarted by L3; the kernel keeps running.
 6. DMA is never available without an IOMMU domain in the default policy.
-7. Layer membership is part of the manifest, not of the SHARD image. A SHARD image
+7. Access class (D0, D1, D2) is part of the manifest, checked by the loader against the capabilities requested.
+8. Layer membership is part of the manifest, not of the SHARD image. A SHARD image
    cannot claim a higher layer for itself.
 
 ## Source layout mapping
@@ -77,7 +72,7 @@ Each layer maps to a source subsystem. A unit's layer is its subsystem's layer.
 - `memory/`, `scheduler/` (mechanism), `trap/`, `timer/` → L1
 - `cap/`, `ipc/`, `loader/`, `syscall/`, `irq/` → L2
 - `svc/device_mgr/`, `svc/supervisor/`, `svc/broker/` → L3
-- `driver/` (tier A and B) → L4/L5, chosen by manifest
+- `driver/mediated/` → L4 (D0), `driver/direct/` → L5 (D1, D2), chosen by manifest
 - user programs live outside the kernel tree.
 
 The layout checker will enforce that L1 never includes L2+ headers. This is not yet in
@@ -88,5 +83,5 @@ The layout checker will enforce that L1 never includes L2+ headers. This is not 
 2. L1: paging, traps, timer.
 3. L2: capability table, loader (places one SHARD image, installs its caps), syscall dispatch with the console write call.
 4. L3: supervisor starts one user program at L7 and reports its exit.
-5. L6/L4: IPC between a service and a tier A driver for a device with no DMA (serial).
-6. L5: DMA only after the IOMMU path is tested on hardware.
+5. L4: serial driver (D0) through kernel calls, via IPC.
+6. L5: a D1 driver for a device with MSI but no DMA, then DMA only after the IOMMU path is tested on hardware.

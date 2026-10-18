@@ -9,13 +9,20 @@ no path, PID, or global name grants access.
 | Kind | Grants | Layers that may hold it |
 |---|---|---|
 | `mem` | a virtual range, rw or rx | L1-L7 (as manifest allows) |
-| `mmio` | a physical range from a device BAR, rw | L4, L5 |
-| `irq` | one interrupt vector, delivered as a message | L4, L5 |
-| `port` | a range of x86 I/O ports, enforced by the TSS I/O bitmap | L4 only |
-| `dma` | a DMA window inside one IOMMU domain | L5 only |
+| `bar` | read/write of one BAR of one function, mapped by the kernel | L5 (D1, D2) |
+| `msi` | the kernel programs up to N MSI vectors of one function to the driver's endpoint | L5 (D1, D2) |
+| `cfg` | kernel-checked config-space read, and write on an allowlist of offsets | L4 (D0) |
+| `kcall` | a kernel call group: timer, interrupt controller, power, platform | L4 (D0) |
+| `port` | x86 I/O ports, enforced by the TSS I/O bitmap | L4 (D0), only if the manifest lists them |
+| `dma` | a DMA window inside one IOMMU domain | L5 (D1, D2) |
+| `enum` | enumerate children under one bus controller | L5 (D2) only |
+| `delegate` | create a weaker child capability for a discovered child | L5 (D2) only |
 | `endpoint` | send or receive on one IPC endpoint | L3-L7 |
 | `syscall-group` | a named group of syscalls (see below) | L3-L7 |
 | `spawn` | the right to start a program at a layer below the caller's | L3 only |
+
+Config writes, bridge windows, BAR placement and interrupt routing are not capability
+kinds at all. No driver can hold them; only L3 can ask the kernel to change them.
 
 ## Syscall groups
 - `core`: exit, yield, time. Everyone.
