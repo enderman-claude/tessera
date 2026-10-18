@@ -2,7 +2,7 @@
 CC      ?= gcc
 LD      ?= ld
 CFLAGS  := -std=c11 -Wall -Wextra -Werror -ffreestanding -fno-stack-protector \
-           -fno-pic -mno-red-zone -nostdlib -Iinclude
+           -fpic -mno-red-zone -nostdlib -Iinclude
 UNITS   := $(wildcard src/*/*/*.c)
 OBJS    := $(patsubst src/%.c,build/%.o,$(UNITS))
 BUILD   := build
@@ -17,7 +17,7 @@ $(BUILD)/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD)/BOOTX64.EFI: $(OBJS)
-	$(LD) -m i386pep --subsystem 10 -e efi_entry -o $@ $(OBJS)
+	$(LD) -m i386pep --subsystem 10 --dynamicbase --nxcompat -e efi_entry -o $@ $(OBJS)
 
 clean:
 	rm -rf $(BUILD)

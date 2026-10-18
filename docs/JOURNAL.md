@@ -17,3 +17,12 @@ Newest entries first.
 - Confirmed `ld -m i386pep --subsystem 10` produces a PE32+ EFI app.
 - Added design, roadmap, and this journal.
 - Added zstd as a submodule under `third_party/zstd` (external, not written by us).
+
+## Session 4 (paused, state recorded)
+- Stage 1 boot units implemented per docs/spec/boot.md: console, memory map read, usable page count, exit boot services, halt.
+- Build now uses -fpic and --dynamicbase so relocations are not needed for the code.
+- Open: the PE image has an empty Base Relocation Directory, and a `.comment` section sits
+  below the image base. Both are still to be checked/removed.
+- Open: menuconfig. kconfiglib installed (pip). Kconfig files for units are not written yet.
+- Paused to build the SHARD binary format in its own repo (enderman-claude/shard) and
+  add it to tesseraOS as lib/shard. Kernel loader integration is the next step.
