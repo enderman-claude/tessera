@@ -30,3 +30,8 @@ Newest entries first.
 ## Session 5
 - Wrote docs/spec/layers.md: kernel space, driver space, user space, their privilege levels, the rules between them, and the build order.
 - Decided drivers run as separate programs (ring 3) with explicit hardware grants, not in the kernel.
+
+## Session 6
+- Replaced the three-layer plan with eight layers (L0 firmware boundary to L7 applications).
+- Removed driver-space defaults that were too permissive: DMA needs an IOMMU domain (refused otherwise), port I/O is limited to a per-port grant, and there is no trusted-without-IOMMU mode.
+- Added docs/spec/capabilities.md: capability kinds, syscall groups, delegation (weaker only), revocation, and the enforcement point in L2.

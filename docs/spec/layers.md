@@ -1,76 +1,92 @@
 # Layers
 
-tessera is split into three privilege domains. Code in one domain can only reach
-another through a defined interface, and each interface is listed here.
+tessera has eight layers, numbered from most to least privileged. A layer may only
+call the layer directly below it or a layer that explicitly exports an interface to it.
+Calls upward are replies, never requests (interrupts and IPC replies excepted; see rules).
 
-| Layer | Privilege (x86_64) | Who runs there | Can touch hardware | Can call down into |
+| # | Layer | Privilege | Lifetime | Holds |
 |---|---|---|---|---|
-| Kernel space | ring 0 | boot, memory manager, scheduler, IPC, interrupt routing | yes, directly | nothing |
-| Driver space | ring 3, with explicit I/O grants | device drivers as separate programs | only what the kernel grants | kernel space, through syscalls |
-| User space | ring 3 | applications, services, tools | no | kernel space (syscalls), driver space (IPC) |
+| L0 | Firmware boundary | ring 0, under UEFI | until ExitBootServices | boot stage 1 (`boot/`) |
+| L1 | Kernel core | ring 0 | always | page tables, context switch, trap and syscall entry, timer tick |
+| L2 | Kernel services | ring 0 | always | capability table, IPC, SHARD loader, syscall dispatch, interrupt routing |
+| L3 | System services | ring 3, trusted | always | device manager, supervisor (starts everything), resource broker |
+| L4 | Driver tier A | ring 3, device-only | while device is bound | MMIO and IRQ capabilities for one device |
+| L5 | Driver tier B | ring 3, DMA-capable | while device is bound | everything in A, plus a DMA capability bound to an IOMMU domain |
+| L6 | User services | ring 3, unprivileged | always | filesystem, network, display, etc.; reach hardware only through L4/L5 IPC |
+| L7 | Applications | ring 3, sandboxed | per process | a minimal capability set chosen by the supervisor |
 
-## Kernel space
-Owns the machine. Everything here runs with full access.
+## What each layer may do
 
-Contents (planned):
-- boot stub and boot info handoff (`boot/`, today stage 1)
-- physical and virtual memory (`memory/`)
-- scheduler and context switch (`scheduler/`)
-- interrupt and exception routing, including delivery of device interrupts to drivers (`interrupt/`)
-- syscall entry (`syscall/`)
-- IPC between domains (`ipc/`)
-- the SHARD loader, which places programs into memory for user and driver space (`loader/`)
+**L0 Firmware boundary.** Runs once, before the kernel exists. Ends at ExitBootServices.
+Nothing from L0 survives into later layers except the memory map it hands over.
 
-Kernel space keeps only what must be privileged. Policy (which driver owns which
-device, what a process may open) lives in user space as services.
+**L1 Kernel core.** Mechanism only: map and unmap pages, switch contexts, enter and leave
+traps, count ticks. It contains no policy: no scheduling decisions beyond round robin,
+no naming, no device knowledge. Its size is a budget and is reviewed when it grows.
 
-## Driver space
-Drivers run as separate programs, not inside the kernel. A driver crash should not
-take down the machine.
+**L2 Kernel services.** Policy-free plumbing that all higher layers need: the capability
+table, the IPC mechanism, the loader that places a SHARD image and installs its capabilities,
+syscall dispatch that checks capabilities before doing anything, and routing of
+interrupts to the driver that holds the matching IRQ capability.
 
-- Each driver is a SHARD image loaded by the kernel loader.
-- The kernel grants a driver: the MMIO ranges of its device, the I/O ports it needs,
-  and the interrupt vectors it handles. Nothing else.
-- A driver receives interrupts as messages from kernel space, not by running in an
-  interrupt handler itself.
-- Drivers talk to the rest of the system over IPC.
-- A driver may need DMA. DMA is only allowed through a buffer the kernel allocates
-  for it, with the device behind an IOMMU when one is present. Without an IOMMU, DMA
-  is marked as a trusted driver and this is recorded in the driver's grant.
+**L3 System services.** Trusted, but still ring 3. The device manager enumerates the bus
+(PCI) and mints device capabilities for drivers. The supervisor decides which program
+gets which capabilities at start. The resource broker hands out memory and CPU budgets.
+L3 can crash and be restarted; the kernel does not depend on it staying up except for
+device binding.
 
-Open: whether to allow an in-kernel "trusted driver" path for performance (for
-example, the timer or the serial console). Default answer: no, until there is a
-measured need.
+**L4 Driver tier A.** A driver for one device. It may:
+- map the MMIO ranges it was granted (BAR regions, read/write as granted)
+- receive its IRQ as a message
+- use the IPC endpoints it was granted
+- use I/O ports only if the grant lists them, enforced by the per-process port bitmap
 
-## User space
-Applications, services, and tools. No direct hardware access.
+It may not: allocate DMA, change page tables, create processes, or touch any device other
+than the one it was bound to.
 
-- Talks to the kernel through a small syscall set (see below).
-- Talks to drivers through IPC, through services that own the policy.
-- Program format: SHARD, with the ELF subset for compatibility.
+**L5 Driver tier B.** Same as A, and in addition may program DMA, but only through a DMA
+capability tied to an IOMMU domain that restricts the device to the buffers the driver
+was given. If the machine has no IOMMU, the loader refuses to bind a tier B driver.
+There is no "trusted without IOMMU" mode in the default policy. A developer build may
+enable an `unsafe-dma` policy, which is recorded in the boot log and cannot be set by a
+program.
+
+**L6 User services.** No hardware capabilities at all. A service asks a driver to do
+hardware work through IPC. The supervisor grants a service the endpoints it needs and
+nothing else.
+
+**L7 Applications.** Sandboxed. Get memory, their own IPC endpoints, and what the
+supervisor names. No driver endpoints unless the supervisor grants them.
 
 ## Rules
-1. Kernel space never calls into driver or user space. It only replies to them
-   (syscalls, IPC, interrupt delivery).
-2. Driver space never calls kernel internals. It only uses the syscalls and grants it is given.
-3. User space never touches hardware. A request for hardware goes to a driver through IPC.
-4. Every crossing between layers goes through a numbered interface listed in one
-   header, so the boundary can be checked and tested.
-5. A driver or user program that faults is stopped and reported, and the kernel keeps running.
+1. A layer calls only downward, or through an IPC endpoint or syscall it was granted.
+2. Every syscall is checked against the caller's capability table. No capability,
+   no access. The check is in L2, not in the caller.
+3. Capabilities are only created by L2 at load time, from a manifest supplied by L3.
+   A program cannot create one.
+4. A capability can be delegated only in a weaker form (narrower range, fewer rights).
+5. A faulting program at any layer is stopped and reported. A faulting driver or service
+   is restarted by L3; the kernel keeps running.
+6. DMA is never available without an IOMMU domain in the default policy.
+7. Layer membership is part of the manifest, not of the SHARD image. A SHARD image
+   cannot claim a higher layer for itself.
 
-## Interfaces (to be defined)
-- `syscall/`: the syscall table. Each entry has a number, arguments, and a status.
-- `ipc/`: message passing. A message has a sender, a receiver, a type, and a bounded payload.
-- `driver/grant`: the list of hardware a driver may use, given by the kernel at load time.
+## Source layout mapping
+Each layer maps to a source subsystem. A unit's layer is its subsystem's layer.
+- `boot/` → L0
+- `memory/`, `scheduler/` (mechanism), `trap/`, `timer/` → L1
+- `cap/`, `ipc/`, `loader/`, `syscall/`, `irq/` → L2
+- `svc/device_mgr/`, `svc/supervisor/`, `svc/broker/` → L3
+- `driver/` (tier A and B) → L4/L5, chosen by manifest
+- user programs live outside the kernel tree.
 
-## Mapping to the current code
-Everything in `src/` today is kernel space, or pre-kernel boot code that runs under
-UEFI. There is no driver or user space code yet. The next layer to build is the
-kernel loader, followed by the syscall table and IPC.
+The layout checker will enforce that L1 never includes L2+ headers. This is not yet in
+`tools/check_layout.py`.
 
-## Build-order plan
-1. Kernel loader: place a SHARD image in memory and start it at user privilege.
-2. Syscall entry and a minimal syscall table (exit, write to console).
-3. IPC between two user programs.
-4. Driver space: load a driver with a grant, deliver an interrupt to it.
-5. Services in user space that own device policy.
+## Build order
+1. L0 → L1 handoff: enter the kernel core with the memory map.
+2. L1: paging, traps, timer.
+3. L2: capability table, loader (places one SHARD image, installs its caps), syscall dispatch with the console write call.
+4. L3: supervisor starts one user program at L7 and reports its exit.
+5. L6/L4: IPC between a service and a tier A driver for a device with no DMA (serial).
+6. L5: DMA only after the IOMMU path is tested on hardware.
