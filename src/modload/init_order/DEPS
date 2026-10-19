@@ -1,0 +1,2 @@
+modload/manifest_parse.h
+lib/str_eq.h

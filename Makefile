@@ -23,3 +23,14 @@ clean:
 	rm -rf $(BUILD)
 
 .PHONY: all check clean
+
+# Host tests: link every unit object with the test driver. Units are freestanding, so
+# only the test program uses the hosted C library.
+TEST_OBJS := $(filter-out build/boot/efi_entry/%,$(OBJS))
+build/test_modload: tests/host/test_modload.c $(OBJS)
+	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
+
+test: build/test_modload
+	./build/test_modload
+
+.PHONY: test

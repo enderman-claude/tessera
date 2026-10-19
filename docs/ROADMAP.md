@@ -22,7 +22,7 @@
 - [ ] L6: D2 bus controller enumerates children through the kernel
 
 ## Kernel modules (see docs/spec/kernel_modules.md)
-- [ ] Module manifest and init-order resolution (host test)
+- [x] Module manifest and init-order resolution (host test: make test)
 - [ ] Built-in module list, initialized in order
 - [ ] Export table: log, console write, timer read
 - [ ] One loadable module from boot media, loaded before L4

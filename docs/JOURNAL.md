@@ -45,3 +45,9 @@ Newest entries first.
 - Added L3 kernel modules: ring-0 extensions, built-in or loadable during boot, not drivers and not services. See docs/spec/kernel_modules.md.
 - Renumbered layers to nine (L0 to L8). Updated capabilities, driver classes and roadmap references.
 - Module rules: imports are an explicit list checked by the loader, no capabilities of their own, trusted and part of the TCB, no unload in v1.
+
+## Session 9
+- Implemented module manifest parsing (modload/manifest_parse), init-order resolution with cycle, missing-dependency, duplicate and provides-conflict checks (modload/init_order), and import checking against an export list (modload/check_imports).
+- Added str_eq and str_bounded_copy to lib.
+- make test runs 24 host checks, all passing.
+- Corrected one expected value in a test: the algorithm picks the lowest-index ready module, and the test expectation had been wrong.
