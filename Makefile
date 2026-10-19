@@ -35,10 +35,14 @@ build/test_modload: tests/host/test_modload.c $(OBJS)
 build/test_payload: tests/host/test_payload.c $(OBJS)
 	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
 
+build/test_morse: tests/host/test_morse.c $(OBJS)
+	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
+
 build/test_ram: tests/host/test_ram.c $(OBJS)
 	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
 
-test: build/test_modload build/test_payload build/test_ram
+test: build/test_modload build/test_payload build/test_ram build/test_morse
+	./build/test_morse
 	./build/test_modload
 	./build/test_payload
 	./build/test_ram

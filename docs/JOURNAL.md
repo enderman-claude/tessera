@@ -69,3 +69,9 @@ Newest entries first.
 - Host tests: 24 more checks (RAM test, bitmap apply, scan). make test passes all suites.
 - Build: stripped the .comment section after linking. ld still prints its warning, then objcopy removes the section.
 - Not yet run in QEMU.
+
+## Session 13
+- kernel_halt is now the panic loop: it repeats "HELP ME I HAVE CRASHED AND I CANNOT GET UP" in Morse on the Caps Lock LED.
+- Speed: 120 ms per unit (10 WPM), about 40 s per message, 14-unit gap between repeats.
+- Units added: kernel/morse_encode (host tested), kernel/morse_play, kernel/delay_pit (PIT channel 2, polled), console/kbd_led (PS/2 0xED), kernel/port_io.
+- Not run on hardware; the LED and PIT paths are untested.

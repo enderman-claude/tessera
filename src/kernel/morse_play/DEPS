@@ -1,0 +1,3 @@
+kernel/morse_encode.h
+kernel/delay_pit.h
+console/kbd_led.h

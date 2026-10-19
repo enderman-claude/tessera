@@ -38,3 +38,7 @@
 - [ ] Second pattern (0xBD) to catch stuck-at-zero bits
 - [ ] Allocator calls ram_bad_apply before its first allocation
 - [ ] Run in QEMU and check the serial report
+
+## Panic loop (see docs/spec/panic_morse.md)
+- [x] Morse encoder, host tested. Caps Lock LED driver and PIT delay written.
+- [ ] Run on real hardware or QEMU with a PS/2 keyboard and check the LED
