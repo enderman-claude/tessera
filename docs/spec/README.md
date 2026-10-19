@@ -16,3 +16,4 @@ does not do. Code comes after the spec for that subsystem is written.
 | [kernel_modules.md](kernel_modules.md) | draft: L3 kernel modules, built-in and loadable |
 | [driver_classes.md](driver_classes.md) | draft: D0 mediated, D1 direct, D2 bus controller |
 | [capabilities.md](capabilities.md) | draft: what a layer may reach, and how it is granted |
+| [payload_injection.md](payload_injection.md) | draft: raw payload injected into RAM, booted without SHARD or ELF |

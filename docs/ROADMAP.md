@@ -27,3 +27,8 @@
 - [x] Init runner: runs modules in order, required failure halts, optional failure skips
 - [ ] Built-in module list compiled into the kernel image
 - [ ] One loadable module from boot media, loaded before L4
+
+## Raw payload (see docs/spec/payload_injection.md)
+- [x] Descriptor, validation (magic, checksum, RAM range), run, boot integration, host tests
+- [ ] Allocator reserves the injected payload's pages
+- [ ] QEMU run with an injected payload (needs QEMU in the environment)

@@ -56,3 +56,9 @@ Newest entries first.
 - Added export table (modload/export_table) and init runner (modload/run_init). Host tests: 32 checks pass.
 - Layer enforcement in tools/check_layout.py: a unit includes only its own or more-privileged layers. The L0 to L1 handoff (boot -> kernel/halt.h) is the single documented exception.
 - Negative test confirmed the checker rejects a real violation.
+
+## Session 11
+- Added raw payload injection: TINJ descriptor at 0x200000, validated against the memory map, run after ExitBootServices. Gated by RAW_PAYLOAD (default 1).
+- Host tests cover valid, bad magic, version, flags, size, entry, checksum, and non-RAM cases, and execute a real x86-64 payload that returns 42.
+- The EFI image builds with RAW_PAYLOAD=1 and RAW_PAYLOAD=0. Not yet run in firmware.
+- Caveat: the payload is trusted by injection, not by signature. Documented in payload_injection.md.
