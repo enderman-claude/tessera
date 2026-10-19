@@ -28,6 +28,7 @@ LAYER = {
     "console": 1,    # L1 kernel core (serial output)
     "kernel": 1,     # L1 kernel core (halt)
     "modload": 2,    # L2 kernel services (module loader)
+    "crash": 1,      # test-only crash helpers, kernel core level
 }
 SHARED = {"lib"}
 

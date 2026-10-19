@@ -79,3 +79,6 @@ Newest entries first.
 ## Session 14
 - Speed review (D.A.V.E): the message is 84 signal symbols and 330 time units, not 276. The 145 ms figure came from the wrong total. At 120 ms per unit it was 10 WPM, 40 s per repeat.
 - Changed to 60 ms per unit (20 WPM), about 20 s per repeat, 28-unit gap. Host tests now pin 84 symbols and 330 units.
+
+## Session 15
+- Added crash/nulldereference (CRASH_TEST=1 build flag, off by default). kernel_main calls it before the payload. Note: no IDT exists yet, so a fault will not reach the panic loop; see roadmap.

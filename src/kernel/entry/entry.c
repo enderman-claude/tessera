@@ -7,6 +7,7 @@
 #include "tessera/memory/ram_bad_list.h"
 #include "tessera/console/serial_com1.h"
 #include "tessera/lib/u64_to_dec.h"
+#include "tessera/crash/nulldereference.h"
 
 #define MAX_REGIONS 512
 
@@ -42,6 +43,11 @@ void kernel_main(const struct efi_memmap *m, const uint64_t *keep, uint32_t n_ke
     serial_com1_puts("tessera: bad bytes: ");
     serial_com1_puts(num);
     serial_com1_puts("\n");
+
+#if TESS_CRASH_TEST
+    serial_com1_puts("tessera: crash test: null dereference\n");
+    crash_null_dereference();
+#endif
 
     if (payload_ready) {
         uint64_t entry = payload_entry;

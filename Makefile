@@ -2,7 +2,8 @@
 CC      ?= gcc
 LD      ?= ld
 RAW_PAYLOAD ?= 1
-CFLAGS  := -DTESS_RAW_PAYLOAD=$(RAW_PAYLOAD) -std=c11 -Wall -Wextra -Werror -ffreestanding -fno-stack-protector \
+CRASH_TEST ?= 0
+CFLAGS  := -DTESS_RAW_PAYLOAD=$(RAW_PAYLOAD) -DTESS_CRASH_TEST=$(CRASH_TEST) -std=c11 -Wall -Wextra -Werror -ffreestanding -fno-stack-protector \
            -fpic -mno-red-zone -nostdlib -Iinclude
 UNITS   := $(wildcard src/*/*/*.c)
 OBJS    := $(patsubst src/%.c,build/%.o,$(UNITS))

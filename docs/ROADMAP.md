@@ -42,3 +42,7 @@
 ## Panic loop (see docs/spec/panic_morse.md)
 - [x] Morse encoder, host tested. Caps Lock LED driver and PIT delay written.
 - [ ] Run on real hardware or QEMU with a PS/2 keyboard and check the LED
+
+## Crash path
+- [x] crash/nulldereference behind CRASH_TEST=1
+- [ ] IDT with exception handlers that call kernel_halt, so faults reach the Morse panic loop
