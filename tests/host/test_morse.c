@@ -50,9 +50,13 @@ int main(void)
     }
     CHECK(alternates, "morse: every signal is a dit (1) or dah (3), no zero-length events");
 
-    int total = 0;
-    for (int i = 0; i < n; i++) total += ev[i].units;
-    CHECK(total > 0, "morse: message has a positive duration");
+    int total = 0, signals = 0;
+    for (int i = 0; i < n; i++) {
+        total += ev[i].units;
+        if (ev[i].on) signals++;
+    }
+    CHECK(signals == 84, "morse: panic message has 84 signal symbols");
+    CHECK(total == 330, "morse: panic message is 330 time units long");
 
     struct morse_event tiny[2];
     CHECK(morse_encode("SOS", tiny, 2) == -1, "morse: output buffer too small rejected");

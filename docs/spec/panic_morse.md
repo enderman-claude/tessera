@@ -8,9 +8,10 @@ repeating:
 by blinking the Caps Lock LED.
 
 ## Timing
-- One time unit is 120 ms (10 words per minute, the standard reference speed).
+- One time unit is 60 ms (20 words per minute). A dit is 60 ms on, a dah 180 ms on.
 - Dit 1 unit on, dah 3 units on. 1 unit off between symbols, 3 between letters, 7 between words.
-- One repetition is 330 units (about 40 s). A 14-unit gap separates repetitions.
+- One repetition is 330 units, about 20 s, with 84 signal symbols. A 28-unit gap (about 1.7 s)
+  separates repetitions.
 
 ## Hardware
 - Caps Lock is set through the PS/2 keyboard controller (port 0x60, command 0xED, then a bit

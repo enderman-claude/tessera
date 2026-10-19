@@ -75,3 +75,7 @@ Newest entries first.
 - Speed: 120 ms per unit (10 WPM), about 40 s per message, 14-unit gap between repeats.
 - Units added: kernel/morse_encode (host tested), kernel/morse_play, kernel/delay_pit (PIT channel 2, polled), console/kbd_led (PS/2 0xED), kernel/port_io.
 - Not run on hardware; the LED and PIT paths are untested.
+
+## Session 14
+- Speed review (D.A.V.E): the message is 84 signal symbols and 330 time units, not 276. The 145 ms figure came from the wrong total. At 120 ms per unit it was 10 WPM, 40 s per repeat.
+- Changed to 60 ms per unit (20 WPM), about 20 s per repeat, 28-unit gap. Host tests now pin 84 symbols and 330 units.
