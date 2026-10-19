@@ -1,5 +1,13 @@
 #include "tessera/scheduler/sched.h"
 
+/* Band for a score: 10 + score * 5 / 1.0, clamped to 10..15. */
+static uint8_t band_for(uint32_t score)
+{
+    uint32_t b = SCHED_BAND_MIN + (score * (SCHED_BAND_MAX - SCHED_BAND_MIN)) / SCHED_SCORE_ONE;
+    if (b > SCHED_BAND_MAX) b = SCHED_BAND_MAX;
+    return (uint8_t)b;
+}
+
 void sched_init(struct sched *s)
 {
     for (uint32_t i = 0; i < SCHED_MAX_TASKS; i++) {
@@ -12,17 +20,30 @@ void sched_init(struct sched *s)
     s->last = -1;
 }
 
-int sched_create(struct sched *s, uint8_t priority)
+int sched_create(struct sched *s)
 {
     for (uint32_t i = 0; i < SCHED_MAX_TASKS; i++) {
         if (s->t[i].state == TASK_FREE) {
             s->t[i].state = TASK_READY;
-            s->t[i].priority = priority;
+            s->t[i].score = SCHED_SCORE_ONE;
+            s->t[i].priority = band_for(SCHED_SCORE_ONE);
             s->t[i].slice_left = SCHED_SLICE_TICKS;
             return (int)i;
         }
     }
     return -1;
+}
+
+int sched_priority(const struct sched *s, int32_t id)
+{
+    if (id < 0 || (uint32_t)id >= SCHED_MAX_TASKS || s->t[id].state == TASK_FREE) return -1;
+    return s->t[id].priority;
+}
+
+uint32_t sched_score(const struct sched *s, int32_t id)
+{
+    if (id < 0 || (uint32_t)id >= SCHED_MAX_TASKS) return 0;
+    return s->t[id].score;
 }
 
 static int valid(const struct sched *s, int32_t id)
@@ -83,8 +104,12 @@ int32_t sched_pick(struct sched *s)
 int32_t sched_tick(struct sched *s)
 {
     if (s->current >= 0 && s->t[s->current].state == TASK_RUNNING) {
-        if (s->t[s->current].slice_left > 0) s->t[s->current].slice_left--;
-        if (s->t[s->current].slice_left > 0) return s->current;
+        struct task *cur = &s->t[s->current];
+        if (cur->slice_left > 0) cur->slice_left--;
+        if (cur->slice_left > 0) return s->current;
+        /* Full slice used: decay the score exponentially and recompute the band. */
+        cur->score -= cur->score >> SCHED_DECAY_SHIFT;
+        cur->priority = band_for(cur->score);
     }
     return sched_pick(s);
 }

@@ -5,15 +5,22 @@ written but has not been run.
 
 ## Model
 - Fixed task slots: `SCHED_MAX_TASKS` (16). Slots are reused after exit.
-- Priority 0 to 255. Higher runs first.
-- Round robin among equal priorities. A tie goes to the first ready task after the last one chosen.
+- Default priority policy (replaces fixed priorities):
+  - A program starts with score 1.0 (Q16 `65536`), which is band 15.
+  - Each full time slice it uses decays the score by 1/8 (`score -= score >> 3`), so the score falls
+    exponentially toward 0.
+  - The band is the score normalised into 10 to 15, higher is higher priority:
+    `band = 10 + score * 5 / 1.0`, clamped to 10..15. Score 1.0 is band 15, score 0 is band 10.
+  - Higher band runs first. A new program therefore preempts a long-running one.
+- Round robin among equal bands. A tie goes to the first ready task after the last one chosen.
 - Time slice: `SCHED_SLICE_TICKS` (10) timer ticks. The running task is charged one tick per tick.
 - Task states: free, ready, running, blocked.
 - Idle when nothing is ready: `current = -1`.
 - The caller owns the `struct sched`. There are no globals and no allocation.
 
 ## Operations (`scheduler/sched`)
-- `sched_create(prio)`: new task, ready. Returns id or -1.
+- `sched_create()`: new program, ready, score 1.0. Returns id or -1.
+- `sched_priority(id)` / `sched_score(id)`: band and score, for reporting.
 - `sched_block(id)` / `sched_unblock(id)`: a blocked task is skipped until unblocked.
 - `sched_exit(id)`: frees the slot.
 - `sched_pick()`: chooses now. The previous running task goes back to ready.

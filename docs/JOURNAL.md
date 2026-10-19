@@ -100,3 +100,6 @@ Newest entries first.
 - Scheduler policy (scheduler/sched): fixed slots, priorities, round robin among equals, time slices, block/unblock/exit. Host tested.
 - Context switch (scheduler/context_switch): x86-64 SysV switch and new-task stack frame. Frame layout is host tested; the switch is not run.
 - Not wired to a timer yet. Nothing calls sched_tick or ctx_switch.
+
+## Session 20
+- Default priority policy: programs start at score 1.0 (band 15). Each full slice decays the score by 1/8 (exponential, integer). Band is the score mapped to 10..15, higher is higher priority. Tests cover decay to band 14 after one slice, decay to band 10 after many, and a fresh program preempting an aged one.
