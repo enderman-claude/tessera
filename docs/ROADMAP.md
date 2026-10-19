@@ -50,3 +50,9 @@
 ## Root console and crash tool
 - [x] Root serial console on COM1, `crash` runs the crash tool as root (host tested dispatch)
 - [ ] IDT fault handlers that call kernel_halt, so a fault shows the Morse panic
+
+## Scheduler (see docs/spec/scheduler.md)
+- [x] Policy: slots, priorities, round robin, slices (host tested)
+- [x] Context switch and task stack frame (written; frame host tested)
+- [ ] Timer interrupt drives sched_tick and ctx_switch (needs IDT)
+- [ ] Idle task plus two test tasks alternate under QEMU

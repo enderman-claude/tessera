@@ -96,3 +96,7 @@ Newest entries first.
 - Removed the `kernel` L1 tag: kernel/entry, halt and morse are L2 services.
 - Open: kernel_halt (Morse panic) is not reached by any path yet; it needs the IDT fault handlers.
 \n## Session 18\n- Timeout is a restart policy (not a delay before the crash): kernel_panic plays the Morse for n seconds (n/20 messages), then resets via the keyboard controller. -1 repeats forever, 0 restarts at once. The combo passes 0.\n- The pseudocode's int(inf/20) would raise in Python; the C version branches on -1 instead.\n- Not run on hardware: the reset (0xFE) and the Morse LED are unverified.\n
+## Session 19
+- Scheduler policy (scheduler/sched): fixed slots, priorities, round robin among equals, time slices, block/unblock/exit. Host tested.
+- Context switch (scheduler/context_switch): x86-64 SysV switch and new-task stack frame. Frame layout is host tested; the switch is not run.
+- Not wired to a timer yet. Nothing calls sched_tick or ctx_switch.
