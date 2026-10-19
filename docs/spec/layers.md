@@ -72,6 +72,11 @@ supervisor names. No driver endpoints unless the supervisor grants them.
 8. Layer membership is part of the manifest, not of the SHARD image. A SHARD image cannot
    claim a higher layer for itself.
 
+## Handoff
+L0 enters L1 once, at a single header (`kernel/halt.h` today; the kernel entry point later).
+This is the only upward include the layout checker allows. Any other include of a higher
+layer is an error.
+
 ## Source layout mapping
 - `boot/` -> L0
 - `memory/`, `scheduler/` (mechanism), `trap/`, `timer/` -> L1
@@ -81,8 +86,9 @@ supervisor names. No driver endpoints unless the supervisor grants them.
 - `driver/mediated/` -> L5 (D0), `driver/direct/` -> L6 (D1, D2), chosen by manifest
 - user programs live outside the kernel tree.
 
-The layout checker will enforce that L1 never includes L2+ headers, and that L2 never
-includes L3+ headers. This is not yet in `tools/check_layout.py`.
+The layout checker enforces that a unit includes only headers from its own or a more
+privileged layer (lower number), with the L0 to L1 handoff as the one exception. The
+subsystem-to-layer table is in `tools/check_layout.py` (`LAYER`).
 
 ## Build order
 1. L0 -> L1 handoff: enter the kernel core with the memory map.

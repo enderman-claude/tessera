@@ -28,6 +28,7 @@ enum mod_status {
     MOD_ERR_DUPLICATE = -8,
     MOD_ERR_UNRESOLVED_IMPORT = -9,
     MOD_ERR_PROVIDES_CONFLICT = -10,
+    MOD_ERR_REQUIRED_FAILED = -11,
 };
 
 struct mod_manifest {

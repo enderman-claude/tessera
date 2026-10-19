@@ -19,6 +19,21 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "src"
 INC = ROOT / "include" / "tessera"
 MAX_LINES = 150
+
+# Layer of each subsystem (see docs/spec/layers.md). Lower number = more privileged.
+LAYER = {
+    "boot": 0,       # L0 firmware boundary
+    "memory": 1,     # L1 kernel core
+    "scheduler": 1,  # L1 kernel core (mechanism)
+    "console": 1,    # L1 kernel core (serial output)
+    "kernel": 1,     # L1 kernel core (halt)
+    "modload": 2,    # L2 kernel services (module loader)
+}
+SHARED = {"lib"}
+
+# The one allowed upward include: boot (L0) enters the kernel core (L1) at a single
+# handoff header. See docs/spec/layers.md, "Handoff".
+HANDOFF = {("boot", "kernel")}
 INCLUDE_RE = re.compile(r'#\s*include\s+"([^"]+)"')
 
 errors = []
@@ -59,6 +74,11 @@ for unit_dir in sorted(p for p in SRC.glob("*/*") if p.is_dir()):
                 public = target[len("tessera/"):]
                 if public not in allowed:
                     err(f"{f.relative_to(ROOT)}: includes {target} which is not in its allowed set")
+                target_sub = public.split("/")[0]
+                if ((subsystem, target_sub) not in HANDOFF and subsystem in LAYER
+                        and target_sub in LAYER and LAYER[target_sub] > LAYER[subsystem]):
+                    err(f"{f.relative_to(ROOT)}: layer violation, {subsystem} (L{LAYER[subsystem]}) "
+                        f"includes {target} from {target_sub} (L{LAYER[target_sub]})")
             else:
                 err(f"{f.relative_to(ROOT)}: relative include \"{target}\"; use tessera/... paths")
 

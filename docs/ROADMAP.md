@@ -23,6 +23,7 @@
 
 ## Kernel modules (see docs/spec/kernel_modules.md)
 - [x] Module manifest and init-order resolution (host test: make test)
-- [ ] Built-in module list, initialized in order
-- [ ] Export table: log, console write, timer read
+- [x] Export table (log_write, console_write, timer_read, mem_alloc), checked against module imports
+- [x] Init runner: runs modules in order, required failure halts, optional failure skips
+- [ ] Built-in module list compiled into the kernel image
 - [ ] One loadable module from boot media, loaded before L4

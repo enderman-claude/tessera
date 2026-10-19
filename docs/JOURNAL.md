@@ -51,3 +51,8 @@ Newest entries first.
 - Added str_eq and str_bounded_copy to lib.
 - make test runs 24 host checks, all passing.
 - Corrected one expected value in a test: the algorithm picks the lowest-index ready module, and the test expectation had been wrong.
+
+## Session 10
+- Added export table (modload/export_table) and init runner (modload/run_init). Host tests: 32 checks pass.
+- Layer enforcement in tools/check_layout.py: a unit includes only its own or more-privileged layers. The L0 to L1 handoff (boot -> kernel/halt.h) is the single documented exception.
+- Negative test confirmed the checker rejects a real violation.
