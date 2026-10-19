@@ -8,14 +8,25 @@
 #include "tessera/console/serial_com1.h"
 #include "tessera/lib/u64_to_dec.h"
 #include "tessera/shell/serial_root.h"
+#include "tessera/trap/init.h"
+#include "tessera/kernel/panic.h"
 
 #define MAX_REGIONS 512
 
 static struct ram_region regions[MAX_REGIONS];
 
+static void fatal_to_panic(const struct trap_frame *f)
+{
+    (void)f;
+    kernel_panic();
+}
+
 void kernel_main(const struct efi_memmap *m, const uint64_t *keep, uint32_t n_keep,
                  int payload_ready, uint64_t payload_entry)
 {
+    /* Exceptions go to the Morse panic from here on. */
+    trap_init(fatal_to_panic);
+
     char num[24];
     uint32_t nreg = ram_scan(m, keep, n_keep, regions, MAX_REGIONS);
     struct ram_test_result total = {0};

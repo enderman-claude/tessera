@@ -108,3 +108,8 @@ Newest entries first.
 - Priority model rebuilt: priority (default 10, unbounded int32, inf is INT32_MAX), start (default priority+5), excess decays toward priority per full slice (rounded up, so it reaches the target), decay can be disabled per program.
 - Owner may lower their own program's priority; root may raise any program. Non-owner denied. Changing priority keeps excess.
 - Open: whether a spawner can start a program above 15 without root.
+
+## Session 22
+- Traps: own GDT (lgdt with far return), 256-gate IDT with 64-bit interrupt gates, exception stubs 0..31 in assembly (macros, to fit the line limit), common path that builds a trap frame, dispatch that prints on COM1 and calls the fatal hook.
+- kernel_main calls trap_init first, with kernel_panic as the fatal handler, so an exception ends in the Morse panic and the restart policy.
+- Host tests cover the GDT and IDT encodings (9 suites, all pass). The stubs, lgdt and lidt have not run.

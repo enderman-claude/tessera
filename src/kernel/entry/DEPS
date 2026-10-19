@@ -7,3 +7,6 @@ memory/ram_bad_list.h
 console/serial_com1.h
 lib/u64_to_dec.h
 shell/serial_root.h
+trap/init.h
+trap/dispatch.h
+kernel/panic.h

@@ -56,3 +56,9 @@
 - [x] Context switch and task stack frame (written; frame host tested)
 - [ ] Timer interrupt drives sched_tick and ctx_switch (needs IDT)
 - [ ] Idle task plus two test tasks alternate under QEMU
+
+## Traps (see docs/spec/traps.md)
+- [x] Own GDT, IDT encoding, exception stubs 0..31, dispatch to the panic (encodings host tested)
+- [ ] Run the exception path in QEMU: prints vector and reaches the Morse panic
+- [ ] Timer interrupt (vector 32) calls sched_tick and ctx_switch
+- [ ] PIC or APIC setup

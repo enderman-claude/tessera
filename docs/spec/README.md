@@ -19,3 +19,4 @@ does not do. Code comes after the spec for that subsystem is written.
 | [payload_injection.md](payload_injection.md) | draft: raw payload injected into RAM, booted without SHARD or ELF |
 | [ram_test.md](ram_test.md) | draft: boot RAM test, pattern 0x42, bad pages mapped out |
 | [panic_morse.md](panic_morse.md) | draft: kernel_halt sends the panic message in Morse on Caps Lock |
+| [traps.md](traps.md) | draft: GDT, IDT, exception stubs and dispatch to the panic |

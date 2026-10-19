@@ -24,6 +24,7 @@ MAX_LINES = 150
 LAYER = {
     "boot": 0,       # L0 firmware boundary
     "port": 1,       # L1 kernel core (port I/O primitives)
+    "trap": 1,       # L1 kernel core (GDT, IDT, exception entry)
     "memory": 1,     # L1 kernel core
     "scheduler": 1,  # L1 kernel core (mechanism)
     "console": 1,    # L1 kernel core (serial output)

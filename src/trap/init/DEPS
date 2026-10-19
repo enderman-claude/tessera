@@ -1,0 +1,4 @@
+trap/gdt.h
+trap/idt.h
+trap/isr_table.h
+trap/dispatch.h

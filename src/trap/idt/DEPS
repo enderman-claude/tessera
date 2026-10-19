@@ -1,0 +1,2 @@
+trap/gdt.h
+trap/idt.h
