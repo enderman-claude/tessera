@@ -7,7 +7,7 @@
 #include "tessera/memory/ram_bad_list.h"
 #include "tessera/console/serial_com1.h"
 #include "tessera/lib/u64_to_dec.h"
-#include "tessera/crash/nulldereference.h"
+#include "tessera/syscall/debug_crash.h"
 
 #define MAX_REGIONS 512
 
@@ -44,10 +44,11 @@ void kernel_main(const struct efi_memmap *m, const uint64_t *keep, uint32_t n_ke
     serial_com1_puts(num);
     serial_com1_puts("\n");
 
-#if TESS_CRASH_TEST
-    serial_com1_puts("tessera: crash test: null dereference\n");
-    crash_null_dereference();
-#endif
+    /* Boot runs the crash test as root, so it is on by default. A non-root caller is
+     * denied: debug_crash_authorized() is root or a loaded module, and nothing else. */
+    struct principal boot_root = { .uid = 0, .is_module = 0 };
+    serial_com1_puts("tessera: debug.crash test as root\n");
+    (void)sys_debug_crash(&boot_root);
 
     if (payload_ready) {
         uint64_t entry = payload_entry;

@@ -82,3 +82,9 @@ Newest entries first.
 
 ## Session 15
 - Added crash/nulldereference (CRASH_TEST=1 build flag, off by default). kernel_main calls it before the payload. Note: no IDT exists yet, so a fault will not reach the panic loop; see roadmap.
+
+## Session 16
+- Crash test is on by default (no build flag). Invoking debug.crash requires the caller to be root (uid 0) or a loaded kernel module. Boot runs it as root, so it fires by default.
+- Removed the capability table and the untracked HMAC/SHA-256 files from an earlier rejected approach. Authority is a principal check (root or module), not a grant list.
+- Host test test_crash_auth checks the authority rule. The crash itself is not run in tests.
+- Open: no syscall entry or user space exists yet, so a non-root caller cannot reach sys_debug_crash until L2 syscall entry is built.

@@ -2,8 +2,7 @@
 CC      ?= gcc
 LD      ?= ld
 RAW_PAYLOAD ?= 1
-CRASH_TEST ?= 0
-CFLAGS  := -DTESS_RAW_PAYLOAD=$(RAW_PAYLOAD) -DTESS_CRASH_TEST=$(CRASH_TEST) -std=c11 -Wall -Wextra -Werror -ffreestanding -fno-stack-protector \
+CFLAGS  := -DTESS_RAW_PAYLOAD=$(RAW_PAYLOAD) -std=c11 -Wall -Wextra -Werror -ffreestanding -fno-stack-protector \
            -fpic -mno-red-zone -nostdlib -Iinclude
 UNITS   := $(wildcard src/*/*/*.c)
 OBJS    := $(patsubst src/%.c,build/%.o,$(UNITS))
@@ -36,16 +35,23 @@ build/test_modload: tests/host/test_modload.c $(OBJS)
 build/test_payload: tests/host/test_payload.c $(OBJS)
 	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
 
+build/test_crash_auth: tests/host/test_crash_auth.c $(OBJS)
+	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
+
 build/test_morse: tests/host/test_morse.c $(OBJS)
 	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
 
 build/test_ram: tests/host/test_ram.c $(OBJS)
 	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
 
-test: build/test_modload build/test_payload build/test_ram build/test_morse
-	./build/test_morse
+
+
+
+test: build/test_modload build/test_payload build/test_ram build/test_morse build/test_crash_auth
 	./build/test_modload
 	./build/test_payload
 	./build/test_ram
+	./build/test_morse
+	./build/test_crash_auth
 
 .PHONY: test
