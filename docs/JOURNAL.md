@@ -95,3 +95,4 @@ Newest entries first.
 - Layers: kernel services and the shell are L2, syscall is L2, port I/O is its own L1 subsystem so console drivers can use it.
 - Removed the `kernel` L1 tag: kernel/entry, halt and morse are L2 services.
 - Open: kernel_halt (Morse panic) is not reached by any path yet; it needs the IDT fault handlers.
+\n## Session 18\n- Timeout is a restart policy (not a delay before the crash): kernel_panic plays the Morse for n seconds (n/20 messages), then resets via the keyboard controller. -1 repeats forever, 0 restarts at once. The combo passes 0.\n- The pseudocode's int(inf/20) would raise in Python; the C version branches on -1 instead.\n- Not run on hardware: the reset (0xFE) and the Morse LED are unverified.\n

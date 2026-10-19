@@ -16,7 +16,7 @@ int main(void)
     CHECK(shell_dispatch("rm -rf") == SHELL_UNKNOWN, "shell: anything else is unknown");
 
     struct principal user = { .uid = 1000, .is_module = 0 };
-    CHECK(sys_debug_crash(&user) == -1, "shell: non-root caller denied the tool");
+    CHECK(sys_debug_crash(&user, CRASH_TIMEOUT_DEFAULT) == -1, "shell: non-root caller denied the tool");
     printf("%s (%d failures)\n", failures ? "FAILED" : "PASSED", failures);
     return failures ? 1 : 0;
 }

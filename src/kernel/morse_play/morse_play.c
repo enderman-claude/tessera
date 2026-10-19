@@ -18,3 +18,13 @@ __attribute__((noreturn)) void morse_play_forever(const char *text, uint32_t uni
         delay_ms(repeat_gap_units * unit_ms);
     }
 }
+
+void morse_play_once(const char *text, uint32_t unit_ms)
+{
+    int n = morse_encode(text, events, MORSE_EVENT_MAX);
+    for (int i = 0; n > 0 && i < n; i++) {
+        kbd_led_set(events[i].on ? KBD_LED_CAPS : 0);
+        delay_ms(events[i].units * unit_ms);
+    }
+    kbd_led_set(0);
+}

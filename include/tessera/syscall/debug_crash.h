@@ -11,8 +11,12 @@ struct principal {
 /* Authority rule for debug.crash: root, or a loaded kernel module. Nothing else. */
 int debug_crash_authorized(const struct principal *p);
 
+/* restart_s: seconds of Morse after the crash before the restart. -1 (CRASH_TIMEOUT_DEFAULT) repeats
+ * forever. 0 restarts at once. */
+#define CRASH_TIMEOUT_DEFAULT (-1)
+
 /* Syscall debug.crash. Denied (-1, no side effect) unless debug_crash_authorized.
- * If authorized, the crash is triggered and this does not return. */
-int64_t sys_debug_crash(const struct principal *p);
+ * Invalid restart value (below -1) returns -2. Otherwise the crash runs and this does not return. */
+int64_t sys_debug_crash(const struct principal *p, int32_t restart_s);
 
 #endif

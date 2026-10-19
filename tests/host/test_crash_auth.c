@@ -14,7 +14,7 @@ int main(void)
     CHECK(debug_crash_authorized(&module), "auth: loaded module allowed");
     CHECK(!debug_crash_authorized(&user), "auth: ordinary user denied");
     CHECK(!debug_crash_authorized(0), "auth: no principal denied");
-    CHECK(sys_debug_crash(&user) == -1, "auth: denied call returns -1 and does not crash");
+    CHECK(sys_debug_crash(&user, CRASH_TIMEOUT_DEFAULT) == -1, "auth: denied call returns -1 and does not crash");
     printf("%s (%d failures)\n", failures ? "FAILED" : "PASSED", failures);
     return failures ? 1 : 0;
 }

@@ -34,3 +34,20 @@ by blinking the Caps Lock LED.
   is host tested. The LED and PIT paths are written but not run.
 - Caps Lock toggles on some keyboards are immediate and some ignore the LED command.
 - Lowercase folds to capitals. Digits and a few letters are supported; punctuation is skipped.
+
+## Restart policy (panic)
+`kernel_panic()` sends the message for `restart_s` seconds, then resets the machine:
+- `restart_s = -1` (default): repeat forever, never restart.
+- `restart_s = 0`: no message, restart at once (the Ctrl+Alt+Shift+Enter combo, with Caps Lock on).
+- otherwise: `restart_s / 20` messages (each about 20 s), then reset.
+
+    if n == -1: repeat forever
+    else:       for i in range(n // 20): morse()
+    reset
+
+The reset writes 0xFE to the keyboard controller (port 0x64), which pulses the CPU reset line.
+If the reset does nothing, the CPU halts.
+
+`sys_debug_crash(principal, restart_s)` stores the restart policy and then crashes. Once the
+IDT exists, the fault handler calls `kernel_panic()`, so the policy applies. Until then, the
+fault resets the machine directly and no message is sent.

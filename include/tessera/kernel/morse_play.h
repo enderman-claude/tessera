@@ -6,4 +6,7 @@
  * Never returns. */
 __attribute__((noreturn)) void morse_play_forever(const char *text, uint32_t unit_ms, uint32_t repeat_gap_units);
 
+/* Plays text once on Caps Lock, then turns the LED off. */
+void morse_play_once(const char *text, uint32_t unit_ms);
+
 #endif

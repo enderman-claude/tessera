@@ -1,4 +1,6 @@
 shell/dispatch.h
+shell/key_combo.h
 syscall/debug_crash.h
 console/serial_com1.h
+console/ps2_poll.h
 port/port_io.h
