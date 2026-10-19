@@ -23,12 +23,15 @@ MAX_LINES = 150
 # Layer of each subsystem (see docs/spec/layers.md). Lower number = more privileged.
 LAYER = {
     "boot": 0,       # L0 firmware boundary
+    "port": 1,       # L1 kernel core (port I/O primitives)
     "memory": 1,     # L1 kernel core
     "scheduler": 1,  # L1 kernel core (mechanism)
     "console": 1,    # L1 kernel core (serial output)
-    "kernel": 1,     # L1 kernel core (halt)
+    "kernel": 2,     # L2 kernel services (entry, halt, morse, root console)
+    "shell": 2,      # L2 kernel services (root serial console)
+    "syscall": 2,    # L2 kernel services (syscall entry points)
     "modload": 2,    # L2 kernel services (module loader)
-    "crash": 1,      # test-only crash helpers, kernel core level
+    "crash": 1,      # crash helper, reached only through the L2 syscall
 }
 SHARED = {"lib"}
 

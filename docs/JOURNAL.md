@@ -88,3 +88,10 @@ Newest entries first.
 - Removed the capability table and the untracked HMAC/SHA-256 files from an earlier rejected approach. Authority is a principal check (root or module), not a grant list.
 - Host test test_crash_auth checks the authority rule. The crash itself is not run in tests.
 - Open: no syscall entry or user space exists yet, so a non-root caller cannot reach sys_debug_crash until L2 syscall entry is built.
+
+## Session 17
+- Boot no longer crashes automatically. The crash is a dedicated tool: the root serial console (COM1) runs it when the operator types `crash`.
+- Root console (shell/serial_root) and command dispatch (shell/dispatch, host tested). Serial input is root because it is physical access.
+- Layers: kernel services and the shell are L2, syscall is L2, port I/O is its own L1 subsystem so console drivers can use it.
+- Removed the `kernel` L1 tag: kernel/entry, halt and morse are L2 services.
+- Open: kernel_halt (Morse panic) is not reached by any path yet; it needs the IDT fault handlers.

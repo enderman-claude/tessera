@@ -46,3 +46,7 @@
 ## Crash path
 - [x] crash/nulldereference behind CRASH_TEST=1
 - [ ] IDT with exception handlers that call kernel_halt, so faults reach the Morse panic loop
+
+## Root console and crash tool
+- [x] Root serial console on COM1, `crash` runs the crash tool as root (host tested dispatch)
+- [ ] IDT fault handlers that call kernel_halt, so a fault shows the Morse panic

@@ -1,5 +1,5 @@
 #include "tessera/console/kbd_led.h"
-#include "tessera/kernel/port_io.h"
+#include "tessera/port/port_io.h"
 
 #define KBD_DATA 0x60
 #define KBD_STATUS 0x64

@@ -1,4 +1,4 @@
-#include "tessera/kernel/port_io.h"
+#include "tessera/port/port_io.h"
 
 uint8_t port_inb(uint16_t port)
 {

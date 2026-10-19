@@ -1,5 +1,5 @@
 #include "tessera/kernel/delay_pit.h"
-#include "tessera/kernel/port_io.h"
+#include "tessera/port/port_io.h"
 
 #define PIT_CH2_DATA 0x42
 #define PIT_CMD 0x43
