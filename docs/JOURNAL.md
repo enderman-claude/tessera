@@ -103,3 +103,8 @@ Newest entries first.
 
 ## Session 20
 - Default priority policy: programs start at score 1.0 (band 15). Each full slice decays the score by 1/8 (exponential, integer). Band is the score mapped to 10..15, higher is higher priority. Tests cover decay to band 14 after one slice, decay to band 10 after many, and a fresh program preempting an aged one.
+
+## Session 21
+- Priority model rebuilt: priority (default 10, unbounded int32, inf is INT32_MAX), start (default priority+5), excess decays toward priority per full slice (rounded up, so it reaches the target), decay can be disabled per program.
+- Owner may lower their own program's priority; root may raise any program. Non-owner denied. Changing priority keeps excess.
+- Open: whether a spawner can start a program above 15 without root.
