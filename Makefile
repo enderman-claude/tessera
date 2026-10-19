@@ -19,6 +19,7 @@ $(BUILD)/%.o: src/%.c
 
 $(BUILD)/BOOTX64.EFI: $(OBJS)
 	$(LD) -m i386pep --subsystem 10 --dynamicbase --nxcompat -e efi_entry -o $@ $(OBJS)
+	objcopy -R .comment $@
 
 clean:
 	rm -rf $(BUILD)
@@ -34,8 +35,12 @@ build/test_modload: tests/host/test_modload.c $(OBJS)
 build/test_payload: tests/host/test_payload.c $(OBJS)
 	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
 
-test: build/test_modload build/test_payload
+build/test_ram: tests/host/test_ram.c $(OBJS)
+	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
+
+test: build/test_modload build/test_payload build/test_ram
 	./build/test_modload
 	./build/test_payload
+	./build/test_ram
 
 .PHONY: test

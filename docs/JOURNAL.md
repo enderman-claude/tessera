@@ -62,3 +62,10 @@ Newest entries first.
 - Host tests cover valid, bad magic, version, flags, size, entry, checksum, and non-RAM cases, and execute a real x86-64 payload that returns 42.
 - The EFI image builds with RAW_PAYLOAD=1 and RAW_PAYLOAD=0. Not yet run in firmware.
 - Caveat: the payload is trusted by injection, not by signature. Documented in payload_injection.md.
+
+## Session 12
+- Boot RAM test: after ExitBootServices, fill free conventional RAM with 0x42, read back, map bad pages out (memory/ram_test, memory/ram_bad_list, memory/ram_bad_apply, boot/ram_scan).
+- kernel/entry (kernel_main) is the second L0->L1 handoff, next to kernel/halt. It runs the test, reports over COM1, runs an accepted payload, and halts.
+- Host tests: 24 more checks (RAM test, bitmap apply, scan). make test passes all suites.
+- Build: stripped the .comment section after linking. ld still prints its warning, then objcopy removes the section.
+- Not yet run in QEMU.

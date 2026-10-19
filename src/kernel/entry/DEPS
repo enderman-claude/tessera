@@ -1,0 +1,8 @@
+kernel/halt.h
+boot/ram_scan.h
+boot/payload_check.h
+boot/payload_run.h
+memory/ram_test.h
+memory/ram_bad_list.h
+console/serial_com1.h
+lib/u64_to_dec.h

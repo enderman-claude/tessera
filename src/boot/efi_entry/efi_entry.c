@@ -4,9 +4,8 @@
 #include "tessera/boot/efi_memmap_usable.h"
 #include "tessera/boot/efi_exit_boot_services.h"
 #include "tessera/lib/u64_to_dec.h"
-#include "tessera/kernel/halt.h"
+#include "tessera/kernel/entry.h"
 #include "tessera/boot/payload_check.h"
-#include "tessera/boot/payload_run.h"
 
 /* Raw payload injection is on by default. Build with TESS_RAW_PAYLOAD=0 to remove it. */
 #ifndef TESS_RAW_PAYLOAD
@@ -50,12 +49,17 @@ EFI_STATUS EFIAPI efi_entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
         return s;
     }
 
+    /* After exit, the console is gone. Hand over to the kernel, which tests RAM, runs the
+     * payload (if one was accepted before exit), and halts. The keep list stops the RAM test
+     * from writing over this image, its stack, or the injected payload. */
+    uint64_t keep[3] = {
+        (uint64_t)(uintptr_t)&efi_entry,
+        (uint64_t)(uintptr_t)&s,
+        (uint64_t)TESS_INJECT_ADDR,
+    };
 #if TESS_RAW_PAYLOAD
-    /* Re-check against the map that ExitBootServices accepted. The console is gone now. */
-    if (ps == PAYLOAD_OK && payload_check(TESS_INJECT_ADDR, &map, &entry) == PAYLOAD_OK) {
-        payload_run(entry);
-    }
+    kernel_main(&map, keep, 3, ps == PAYLOAD_OK, entry);
+#else
+    kernel_main(&map, keep, 3, 0, 0);
 #endif
-
-    kernel_halt();
 }

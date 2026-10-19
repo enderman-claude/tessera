@@ -3,7 +3,6 @@ boot/efi_memmap_read.h
 boot/efi_memmap_usable.h
 boot/efi_exit_boot_services.h
 lib/u64_to_dec.h
-kernel/halt.h
+kernel/entry.h
 boot/payload_check.h
-boot/payload_run.h
 boot/payload_inject.h
