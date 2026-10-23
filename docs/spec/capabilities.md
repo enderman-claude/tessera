@@ -54,6 +54,17 @@ before any side effect. A failed check returns an error and is written to the au
 (kind, caller, attempted object). It does not stop the program unless the program
 repeats the violation past a limit set by L4.
 
+## Display service (teds)
+teds, the Ender display server (enderman-claude/tesseraOS-teds), runs at L7. The kernel does
+not know about display capabilities, and no new kind is needed for them:
+- teds holds an `endpoint` to its IPC port, and each client holds an `endpoint` to that port.
+- The two display rights, `display-client` (client mode) and `display-direct` (exclusive
+  framebuffer), are decided by teds itself from the manifest of each client. Every client
+  gets only the rights its manifest allows, and teds checks them on each request.
+- Direct mode needs the framebuffer. The kernel grants it to teds with a `mem` capability on
+  the framebuffer range. teds then maps that range for a direct client, and nothing else
+  reaches it.
+
 ## Not yet decided
 - Whether capabilities are per-process tables or a global object space with handles.
 - How manifests are signed and verified. Until then, the supervisor is trusted to write them.
