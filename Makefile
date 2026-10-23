@@ -24,7 +24,11 @@ $(BUILD)/BOOTX64.EFI: $(OBJS)
 clean:
 	rm -rf $(BUILD)
 
-.PHONY: all check clean
+# Boot the image under QEMU with OVMF and check the serial log (needs qemu and OVMF).
+qemu-test: all
+	sh tests/qemu_boot.sh
+
+.PHONY: all check clean qemu-test
 
 # Host tests: link every unit object with the test driver. Units are freestanding, so
 # only the test program uses the hosted C library.

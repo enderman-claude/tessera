@@ -3,9 +3,9 @@
 An original x86_64 kernel that boots as a UEFI application (PE32+ `BOOTX64.EFI`).
 No bootloader beyond the firmware. Built with plain `gcc` and `ld`, no mingw.
 
-> **Status: early stage.** The layout, build, and boundary checker work. The kernel
-> units are stubs: nothing is booted or tested on hardware yet. See
-> [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> **Status: early stage.** The image boots under QEMU with OVMF: it prints its boot stages,
+> leaves boot services, runs the RAM test, and reaches the root console. It has not been
+> tested on hardware. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Documentation
 - [Design](docs/DESIGN.md): goals, boot flow, source layout rules
@@ -26,7 +26,7 @@ Current units:
 
 | Subsystem | Unit | Purpose |
 |---|---|---|
-| boot | efi_entry | UEFI entry point (stub, returns `EFI_SUCCESS`) |
+| boot | efi_entry | UEFI entry point, prints the boot stage and runs the boot path |
 | console | serial_putc | write one byte to COM1, via a caller-supplied port writer |
 | memory | bitmap_alloc | one bit per page allocator |
 | scheduler | sort_priorities | insertion sort of task priorities |
@@ -53,8 +53,10 @@ Currently: [facebook/zstd](https://github.com/facebook/zstd), planned for boot p
 (needs a freestanding shim, not yet written).
 
 ## Testing
-Nothing boots yet. The plan is QEMU with OVMF once the boot stub prints to ConOut.
-The sandbox this was developed in has no QEMU or OVMF, so the boot path is unverified.
+`make test` runs the host tests. `make qemu-test` boots `build/BOOTX64.EFI` under QEMU with
+OVMF (`qemu-system-x86_64` and the `ovmf` package) and checks the serial log for the boot
+markers. The check passes when it sees the boot stages, the boot services exit, the RAM test
+report with zero bad pages, and the root console prompt.
 
 ## Related repos
 

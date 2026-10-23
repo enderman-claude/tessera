@@ -1,8 +1,8 @@
 # Roadmap
 
 - [x] Repo and push workflow
-- [ ] `boot/`: efi_main prints a line via ConOut and returns
-- [ ] `boot/`: read memory map, exit boot services
+- [x] `boot/`: efi_main prints a line via ConOut and returns
+- [x] `boot/`: read memory map, exit boot services
 - [ ] `kernel/`: own GDT and IDT, serial console output
 - [ ] `kernel/`: physical page allocator from the memory map
 - [ ] `kernel/`: paging and higher-half mapping
@@ -37,7 +37,7 @@
 - [x] Bad-page list, pattern test, scan with kernel exclusions, bitmap apply, serial report (host tests)
 - [ ] Second pattern (0xBD) to catch stuck-at-zero bits
 - [ ] Allocator calls ram_bad_apply before its first allocation
-- [ ] Run in QEMU and check the serial report
+- [x] Run in QEMU and check the serial report
 
 ## Panic loop (see docs/spec/panic_morse.md)
 - [x] Morse encoder, host tested. Caps Lock LED driver and PIT delay written.
