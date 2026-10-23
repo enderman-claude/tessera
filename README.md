@@ -56,5 +56,11 @@ Currently: [facebook/zstd](https://github.com/facebook/zstd), planned for boot p
 Nothing boots yet. The plan is QEMU with OVMF once the boot stub prints to ConOut.
 The sandbox this was developed in has no QEMU or OVMF, so the boot path is unverified.
 
+## Related repos
+
+- [tesseraOS](https://github.com/enderman-claude/tesseraOS): the OS that composes this kernel with the other components.
+- [shard](https://github.com/enderman-claude/shard): the binary format and loader for user programs. The kernel's SHARD loader is in the L2 layer.
+- [tesseraOS-teds](https://github.com/enderman-claude/tesseraOS-teds): the display service. It runs as an unprivileged user service over this kernel's IPC endpoints and capabilities.
+
 ## License
 Not yet chosen.
