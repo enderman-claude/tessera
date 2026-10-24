@@ -37,7 +37,7 @@ process. The three choices already exist in the specs; this only packs them.
 ## How the two layers combine
 - godmedspy decides, by uid and party, whether a caller may touch an object at all.
 - The posture decides what the process may do with what it has. Town enforcement
-  (`kernel.md`) applies on top of godmedspy, and a Town process cannot widen its mode
+  (`kernel.md`) applies on top of godmedspy, and a Town process cannot widen its godmedspy
   by any means.
 - Capabilities (`capabilities.md`) remain the fine-grained grants. godmedspy is the
   coarse check that comes first.
@@ -47,6 +47,6 @@ process. The three choices already exist in the specs; this only packs them.
    independent choices. If the intent was an ordered scale, say so and the bits change.
 2. **Does godmedspy replace uid checks?** It can be the only identity layer, or it can
    sit under capabilities. This is the open question from the last discussion.
-3. **Where does root sit?** Here root is a bit in the posture, and a uid 0 check in the mode
+3. **Where does root sit?** Here root is a bit in the posture, and a uid 0 check in godmedspy
    word. The spec currently treats the root operator as unbounded, so the bit only marks
    programs run by root, not the operator.
