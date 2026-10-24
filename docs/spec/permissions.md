@@ -4,23 +4,22 @@ Status: draft for review. Proposes a compact representation for the coarse ident
 and for each process's sandbox posture. It sits alongside the capability model in
 `capabilities.md`; it does not replace it.
 
-## godcivspy: the 12-bit permission word
-The permission word is called **godcivspy**. Its layout follows the Linux mode field,
-so the meaning carries over directly.
-Objects and processes carry a 12-bit godcivspy word:
+## godcivspy: rwxrwxrwx
+godcivspy is the official name for the nine permission bits `rwxrwxrwx`: read, write, and
+execute for the owner, the party, and everyone else. The layout follows the Linux mode
+field, so the meaning carries over directly.
 
 | Bits | Octal digit | Meaning |
 |---|---|---|
-| 11 | 4 | setuid-style: a program runs as its owner's uid |
-| 10 | 4 | setgid-style: a program runs with its party's gid |
-| 9 | 4 | sticky: only the owner may remove or rename an entry |
-| 8-6 | 3 | owner: read, write, execute |
-| 5-3 | 2 | party: read, write, execute |
-| 2-0 | 1 | other: read, write, execute |
+| 8-6 | 0-7 | owner: read, write, execute |
+| 5-3 | 0-7 | party: read, write, execute |
+| 2-0 | 0-7 | other: read, write, execute |
 
-Each rwx triplet is 3 bits, which is one octal digit. Stored in a `uint16_t`, with the top
-4 bits reserved and zero. Ownership, party, and the three rwx triplets are the same as
-`rwxrwxrwx`; godcivspy is the name for this word as a whole.
+Each triplet is 3 bits, which is one octal digit. Stored in a `uint16_t`, with the top
+7 bits reserved and zero.
+
+The special bits (setuid, setgid, sticky) are not part of godcivspy. They are a separate
+question, listed under open questions.
 
 ## Process posture: 3 bits, 8 levels
 Each process carries a 3-bit posture. Each bit is one independent choice:
@@ -50,3 +49,6 @@ process. The three choices already exist in the specs; this only packs them.
 3. **Where does root sit?** Here root is a bit in the posture, and a uid 0 check in godcivspy
    word. The spec currently treats the root operator as unbounded, so the bit only marks
    programs run by root, not the operator.
+4. **Special bits.** Should setuid, setgid, and sticky exist at all? Setuid and setgid let a
+   program run as its owner, which conflicts with the no-ambient-authority rule in Town. If they
+   are dropped, godcivspy is the whole permission field.
