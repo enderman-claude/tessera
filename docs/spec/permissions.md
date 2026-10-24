@@ -16,27 +16,12 @@ Name origins, as the author gave them:
 godcivspy is the name of the whole field, so the names do not map to the owner, party, and
 other triplets. It is the kernel's name for `rwxrwxrwx`.
 
-### Representations
-Syscalls that return a permission field return it in one of two forms:
-- **Text:** nine characters, `rwxrwxrwx`, with `-` for each bit that is not set.
-- **Octal:** three digits, `[0-7][0-7][0-7]`, one digit per triplet, as in Linux `stat`.
-
-Both forms carry the same nine bits. A caller that receives one can convert to the other
-without loss.
- The layout follows the Linux mode
-field, so the meaning carries over directly.
-
-| Bits | Octal digit | Meaning |
-|---|---|---|
-| 8-6 | 0-7 | owner: read, write, execute |
-| 5-3 | 0-7 | party: read, write, execute |
-| 2-0 | 0-7 | other: read, write, execute |
-
-Each triplet is 3 bits, which is one octal digit. Stored in a `uint16_t`, with the top
-7 bits reserved and zero.
-
-The special bits (setuid, setgid, sticky) are not part of godcivspy. They are a separate
-question, listed under open questions.
+### Representation
+- **Native:** a godcivspy value is nine bits in a `uint16_t`, with the top seven bits zero.
+  This is the form the kernel uses, stores, and returns from syscalls.
+- **Rendered:** `rwxrwxrwx` text, and the three-digit octal form, are conversions made for
+  people and tools. The kernel never returns them. A conversion helper produces them from a
+  godcivspy value, and the reverse conversion accepts them.
 
 ## Process posture: 3 bits, 8 levels
 Each process carries a 3-bit posture. Each bit is one independent choice:
