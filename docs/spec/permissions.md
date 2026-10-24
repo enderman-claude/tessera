@@ -13,7 +13,16 @@ Name origins, as the author gave them:
 - **Civ:** not spy. The game Civilization.
 - **Spy:** no access. Team Fortress 2.
 
-The mapping of these names to the owner, party, and other triplets is not yet recorded.
+godcivspy is the name of the whole field, so the names do not map to the owner, party, and
+other triplets. It is the kernel's name for `rwxrwxrwx`.
+
+### Representations
+Syscalls that return a permission field return it in one of two forms:
+- **Text:** nine characters, `rwxrwxrwx`, with `-` for each bit that is not set.
+- **Octal:** three digits, `[0-7][0-7][0-7]`, one digit per triplet, as in Linux `stat`.
+
+Both forms carry the same nine bits. A caller that receives one can convert to the other
+without loss.
  The layout follows the Linux mode
 field, so the meaning carries over directly.
 
