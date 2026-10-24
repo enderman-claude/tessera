@@ -17,11 +17,11 @@ godcivspy is the name of the whole field, so the names do not map to the owner, 
 other triplets. It is the kernel's name for `rwxrwxrwx`.
 
 ### Representation
-- **Native:** a godcivspy value is nine bits in a `uint16_t`, with the top seven bits zero.
-  This is the form the kernel uses, stores, and returns from syscalls.
-- **Rendered:** `rwxrwxrwx` text, and the three-digit octal form, are conversions made for
-  people and tools. The kernel never returns them. A conversion helper produces them from a
-  godcivspy value, and the reverse conversion accepts them.
+- **The OS form:** a godcivspy value is nine bits in a `uint16_t`, with the top seven bits
+  zero. The kernel stores it, checks it, and returns it from syscalls. Nothing else.
+- **Text and octal are userland.** `rwxrwxrwx` and three-digit octal are produced by
+  commands such as `ls` and `stat`, which turn a godcivspy value into text for people. The
+  OS never produces either form, and the syscall interface never carries them.
 
 ## Process posture: 3 bits, 8 levels
 Each process carries a 3-bit posture. Each bit is one independent choice:
