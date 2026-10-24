@@ -91,8 +91,16 @@ not a decision made here: PRs are merged by the author after review.
   can target a syscall interface that is not final.*
 
 ## Licence
-- **L1. MIT for every repo.** This matches ember-gfx. Adding the LICENSE files is a separate
-  PR per repo. *Reason: it is already in use in one repo, and it is permissive.*
+- **L1. Each repo picks its own licence. The default is Apache-2.0, with a NOTICE file.**
+  Apache-2.0 requires forks to keep the copyright and attribution notices, and the NOTICE
+  file carries the project's own wording. The author wants a permissive licence that
+  requires forks to reference the origin, and the NOTICE mechanism does that. A custom
+  attribution clause beyond Apache-2.0 must be reviewed by a lawyer before it is used.
+  *Reason: author rejected MIT for all repos. Apache-2.0 is established, permissive and
+  already requires attribution in forks.*
+- **L2. The joke licence is not adopted.** It is not a recognised licence and its legal
+  effect is unclear. *Reason: a licence that can't be relied on is worse than a plain one.*
+- **L3. oxinit's MIT PR (#13) is on hold** until the licence choice is confirmed.
 
 ## Merging
 - **G1. The author merges.** I do not merge PRs. The merge order is in docs/PRIORITIES.md.
