@@ -35,7 +35,7 @@
 
 ## Boot RAM test (see docs/spec/ram_test.md)
 - [x] Bad-page list, pattern test, scan with kernel exclusions, bitmap apply, serial report (host tests)
-- [ ] Second pattern (0xBD) to catch stuck-at-zero bits
+- [x] Second pattern (0xBD) to catch stuck-at-zero bits
 - [ ] Allocator calls ram_bad_apply before its first allocation
 - [x] Run in QEMU and check the serial report
 

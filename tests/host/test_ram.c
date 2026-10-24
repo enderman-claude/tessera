@@ -47,6 +47,35 @@ static void test_ram_test(void)
           "ram: unaligned address rejected");
 }
 
+/* Simulates a bit stuck at zero: clears bit 7 of one byte after the write pass. */
+static void stuck_bit7_hook(volatile uint8_t *base, uint64_t len, void *ctx)
+{
+    (void)len; (void)ctx;
+    base[stuck_offset] &= (uint8_t)~0x80u;
+}
+
+static void test_second_pattern(void)
+{
+    struct ram_test_result r;
+    stuck_offset = 4096 * 1 + 7;   /* byte 7 of page 1 */
+
+    /* 0x42 has bit 7 clear, so a stuck-at-zero bit 7 reads back correctly: not detected. */
+    ram_bad_reset();
+    CHECK(ram_test_range((uint64_t)(uintptr_t)ram, LEN, RAM_TEST_PATTERN, stuck_bit7_hook, 0, &r) == 0,
+          "ram: stuck bit 7 under 0x42 runs");
+    CHECK(r.bytes_bad == 0 && ram_bad_count() == 0,
+          "ram: stuck bit 7 is invisible to 0x42");
+
+    /* 0xBD has bit 7 set, so the same fault is detected. */
+    ram_bad_reset();
+    CHECK(ram_test_range((uint64_t)(uintptr_t)ram, LEN, RAM_TEST_PATTERN_2, stuck_bit7_hook, 0, &r) == 0,
+          "ram: stuck bit 7 under 0xBD runs");
+    CHECK(r.bytes_bad == 1 && ram_bad_count() == 1 && ram_bad_at(0) == (uint64_t)(uintptr_t)ram + 4096,
+          "ram: stuck bit 7 is detected by 0xBD on page 1");
+    CHECK(r.first_count == 1 && r.first[0].wrote == RAM_TEST_PATTERN_2 && r.first[0].read == (RAM_TEST_PATTERN_2 & ~0x80u),
+          "ram: 0xBD fault reports the wrong bit");
+}
+
 static void test_bitmap(void)
 {
     /* 4 pages starting at ram; page 2 bad (from the previous test) */
@@ -87,6 +116,7 @@ int main(void)
     ram = (uint8_t *)a;
     test_ram_test();
     test_bitmap();
+    test_second_pattern();
     test_scan();
     printf("%s (%d failures)\n", failures ? "FAILED" : "PASSED", failures);
     return failures ? 1 : 0;

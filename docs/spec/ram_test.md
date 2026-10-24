@@ -1,7 +1,8 @@
 # Boot RAM test
 
 At boot, after ExitBootServices, the kernel fills every free RAM page with the pattern
-`0x42`, reads it back, and marks any page with a wrong byte as bad. Bad pages are never
+`0x42`, reads it back, then does the same with `0xBD`. It marks any page with a wrong byte
+in either pass as bad. Bad pages are never
 handed out by the allocator.
 
 ## Where it runs
@@ -37,9 +38,9 @@ Over COM1 (serial, polled): pages tested, bad pages mapped, bad bytes. The UEFI 
 is gone at this point, so serial is the only output.
 
 ## Limits
-- A single `0x42` pattern. A stuck-at-zero bit at a position where `0x42` has a 0 bit is
-  not detected. Adding a second pattern such as `0xBD` would catch those; that is a small
-  change and is the next step.
+- Two patterns, `0x42` and `0xBD`. Together they catch a stuck bit at any position, since
+  each bit is 1 in one of them. Faults that depend on the data (coupling between cells, or
+  a bit that only fails under certain neighbours) are not covered.
 - The test writes all free RAM. On a large machine it is slow, and it is destructive to
   anything the firmware left in conventional memory that the kernel does not know about.
 - Only 4096 bad pages are recorded. Overflow is counted and reported.

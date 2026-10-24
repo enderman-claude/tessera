@@ -7,6 +7,9 @@
  * marks every page with a bad byte in the bad-page list (see ram_bad_list.h). */
 
 #define RAM_TEST_PATTERN 0x42u
+/* Second pass. 0x42 has bit 7 clear, so a bit stuck at zero there is invisible to it. */
+#define RAM_TEST_PATTERN_2 0xBDu
+#define RAM_TEST_PATTERN_COUNT 2u
 #define RAM_TEST_RECORD_MAX 64u
 
 struct ram_bad_byte {

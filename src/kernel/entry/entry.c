@@ -32,17 +32,21 @@ void kernel_main(const struct efi_memmap *m, const uint64_t *keep, uint32_t n_ke
     struct ram_test_result total = {0};
     ram_bad_reset();
 
-    /* Fill every free RAM region with 0x42, read it back, and mark bad pages. */
-    for (uint32_t r = 0; r < nreg; r++) {
-        struct ram_test_result one;
-        if (ram_test_range(regions[r].addr, regions[r].len, RAM_TEST_PATTERN, 0, 0, &one) == 0) {
-            total.pages_tested += one.pages_tested;
-            total.pages_bad += one.pages_bad;
-            total.bytes_bad += one.bytes_bad;
+    /* Fill every free RAM region with each test pattern, read it back, and mark bad pages.
+     * A page that fails either pattern is counted once, by the bad-page list. */
+    static const uint8_t patterns[RAM_TEST_PATTERN_COUNT] = { RAM_TEST_PATTERN, RAM_TEST_PATTERN_2 };
+    for (uint32_t p = 0; p < RAM_TEST_PATTERN_COUNT; p++) {
+        for (uint32_t r = 0; r < nreg; r++) {
+            struct ram_test_result one;
+            if (ram_test_range(regions[r].addr, regions[r].len, patterns[p], 0, 0, &one) == 0) {
+                if (p == 0) total.pages_tested += one.pages_tested;
+                total.bytes_bad += one.bytes_bad;
+            }
         }
     }
+    total.pages_bad = ram_bad_count();
 
-    serial_com1_puts("tessera: ram test pattern 0x42 over ");
+    serial_com1_puts("tessera: ram test patterns 0x42 0xBD over ");
     u64_to_dec(total.pages_tested, num);
     serial_com1_puts(num);
     serial_com1_puts(" pages\n");
