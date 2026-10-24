@@ -28,7 +28,7 @@ status=0
 for marker in \
     "tessera: boot stage 1" \
     "tessera: leaving boot services" \
-    "tessera: ram test pattern 0x42" \
+    "tessera: ram test patterns 0x42 0xBD" \
     "tessera: bad pages mapped: 0" \
     "root#"
 do
