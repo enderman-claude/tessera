@@ -39,6 +39,25 @@ A strict sandbox that allows everything a program should be able to do, and not 
   manifest already grants that scope. Requests are recorded whether granted or refused.
 - **Audited.** Every refusal is written to the audit log with the caller and the attempted object.
 
+### Country records
+The country records are the one public window. They list every town and every program
+that is not obfuscated. They are the only way a process learns that another town exists.
+
+- **Read-only.** A process can read the records. It cannot change them, and no process
+  can change them except the kernel, when a town is created or a program is listed.
+- **Listed or obfuscated.** A program is listed in the records only if its manifest says so.
+  An obfuscated program does not appear in the records, and its town shows only as a
+  town, with no program names.
+- **Reading reveals no state.** The records show names and existence, not the contents of
+  a town or the state of a program. Reading them does not let a process observe anything
+  inside another town.
+- **Fixed for a run.** The records a process reads are a snapshot taken when the process
+  starts, so the same program sees the same records on every run. This keeps results
+  deterministic.
+- **Audited.** Each read is recorded in the audit log.
+
+Reading the records does not count as crossing a town border.
+
 ### Towns and holidays
 - **A town is an observation boundary.** Processes in different towns cannot see each other:
   no pids, no state, no timing, no handles across the boundary. A process in one town cannot
