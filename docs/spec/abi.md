@@ -42,14 +42,14 @@ This settles the question left open in `capabilities.md` ("per-process tables or
 object space"). It is a choice made here, not a decision from the author.
 
 ## Syscall groups and numbers
-Groups follow `capabilities.md`. Numbers are fixed for the lifetime of the ABI, and unused
+Groups follow `capabilities.md`. Calls are isolated for determinism, not for security (see `isolation.md`). Numbers are fixed for the lifetime of the ABI, and unused
 numbers are reserved, not reused.
 
 | No. | Name | Group | Arguments | Returns |
 |---|---|---|---|---|
 | 0 | exit | core | status | does not return |
 | 1 | yield | core | — | 0 |
-| 2 | time | core | clock id, out ptr | 0; time in ns through the out pointer |
+| 2 | time | clock | clock handle, out ptr | 0; time in ns through the out pointer |
 | 3 | fork | proc | — | child handle in parent, 0 in child (see below) |
 | 4 | exec | proc | program handle, argv ptr, envp ptr | does not return on success |
 | 5 | wait | proc | process handle | exit status |
