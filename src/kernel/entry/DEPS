@@ -10,3 +10,4 @@ shell/serial_root.h
 trap/init.h
 trap/dispatch.h
 kernel/panic.h
+memory/pmm.h

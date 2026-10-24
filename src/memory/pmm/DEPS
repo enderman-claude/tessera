@@ -1,0 +1,4 @@
+memory/bitmap_alloc.h
+memory/ram_bad_apply.h
+memory/ram_bad_list.h
+boot/ram_scan.h
