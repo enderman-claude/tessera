@@ -87,6 +87,13 @@ int pmm_init(const struct ram_region *regions, uint32_t n)
         set_bit(in_use, 0);
     }
 
+    /* Physical page 0 is never handed out. pmm_alloc_page returns 0 to mean failure, so a
+     * usable page at address 0 would be indistinguishable from it. */
+    if (base == 0 && total > 0) {
+        set_bit(not_usable, 0);
+        set_bit(in_use, 0);
+    }
+
     /* Bad pages from the boot RAM test are unusable, exactly like gaps. */
     ram_bad_apply(not_usable, base, total);
     ram_bad_apply(in_use, base, total);

@@ -89,6 +89,17 @@ static void test_page_zero_never_handed_out(void)
     CHECK(pmm_alloc_page() == 0, "pmm: after page 0, the allocator is exhausted");
 }
 
+static void test_page_zero_excluded(void)
+{
+    static const struct ram_region at_zero[] = { { 0, 3 * P } };
+    ram_bad_reset();
+    CHECK(pmm_init(at_zero, 1) == 2, "pmm: physical page 0 is excluded from the pool");
+    uint64_t a = pmm_alloc_page();
+    uint64_t b = pmm_alloc_page();
+    CHECK(a != 0 && b != 0 && pmm_alloc_page() == 0,
+          "pmm: allocations never return 0, and exhaustion still reports 0");
+}
+
 static void test_no_ram(void)
 {
     ram_bad_reset();
@@ -102,6 +113,7 @@ int main(void)
     test_free_and_reuse();
     test_bad_page_excluded();
     test_page_zero_never_handed_out();
+    test_page_zero_excluded();
     test_no_ram();
     if (failures) { printf("%d failure(s)\n", failures); return 1; }
     printf("PASSED (0 failures)\n");
