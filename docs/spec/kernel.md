@@ -39,6 +39,16 @@ A strict sandbox that allows everything a program should be able to do, and not 
   manifest already grants that scope. Requests are recorded whether granted or refused.
 - **Audited.** Every refusal is written to the audit log with the caller and the attempted object.
 
+### Root: the government
+Root is the government. Nothing can be hidden from it.
+
+- **Root sees everything.** Root can observe every town, the inside of every town, every
+  program, obfuscated or not, and every record. Town borders and obfuscation do not apply to root.
+- **Every root observation is audited.** Root has no hidden access: each observation is
+  written to the audit log with the observed object, so the government's view is itself visible.
+- **Root sees, and this spec does not say more yet.** Whether root may also act inside a
+  town (grant, revoke, stop a program) is not decided here. Visibility is settled; power is not.
+
 ### Country records
 The country records are the one public window. They list every town and every program
 that is not obfuscated. They are the only way a process learns that another town exists.
