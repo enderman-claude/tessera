@@ -13,15 +13,26 @@ Name origins, as the author gave them:
 - **Civ:** not spy. The game Civilization.
 - **Spy:** no access. Team Fortress 2.
 
-godcivspy is the name of the whole field, so the names do not map to the owner, party, and
-other triplets. It is the kernel's name for `rwxrwxrwx`.
+The three names are the classes: **God** is the owner, **Civ** is the party, and **Spy** is
+the other. Each class has three letters, one per bit, in read, write, execute order:
 
-### Representation
-- **The OS form:** a godcivspy value is nine bits in a `uint16_t`, with the top seven bits
-  zero. The kernel stores it, checks it, and returns it from syscalls. Nothing else.
-- **Text and octal are userland.** `rwxrwxrwx` and three-digit octal are produced by
-  commands such as `ls` and `stat`, which turn a godcivspy value into text for people. The
-  OS never produces either form, and the syscall interface never carries them.
+| Class | Read | Write | Execute |
+|---|---|---|---|
+| owner (God) | g | o | d |
+| party (Civ) | c | i | v |
+| other (Spy) | s | p | y |
+
+### Display
+A godcivspy value is shown as nine characters. A set bit shows its letter from the table, and
+an unset bit shows `-`. Examples:
+
+| Value | Shown | Meaning |
+|---|---|---|
+| owner all, party none, other none | `god------` | owner read, write, execute |
+| owner all, party read and execute, other read and execute | `godc-vs-y` | party has no write, other has no write |
+| owner all, party all, other read and execute | `godcivs-y` | other has no write |
+
+This display is userland only (see Representation below).
 
 ## Process posture: 3 bits, 8 levels
 Each process carries a 3-bit posture. Each bit is one independent choice:
