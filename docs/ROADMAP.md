@@ -26,7 +26,7 @@
 - [x] Export table (log_write, console_write, timer_read, mem_alloc), checked against module imports
 - [x] Init runner: runs modules in order, required failure halts, optional failure skips
 - [ ] Built-in module list compiled into the kernel image
-- [ ] One loadable module from boot media, loaded before L4
+- [ ] One loadable module from boot media, loaded before L4 (initrd stub in place: include/tessera/modload/initrd.h, discovery not implemented)
 
 ## Raw payload (see docs/spec/payload_injection.md)
 - [x] Descriptor, validation (magic, checksum, RAM range), run, boot integration, host tests
