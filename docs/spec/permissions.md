@@ -6,7 +6,15 @@ and for each process's sandbox posture. It sits alongside the capability model i
 
 ## godcivspy: rwxrwxrwx
 godcivspy is the official name for the nine permission bits `rwxrwxrwx`: read, write, and
-execute for the owner, the party, and everyone else. The layout follows the Linux mode
+execute for the owner, the party, and everyone else.
+
+Name origins, as the author gave them:
+- **God:** no comment.
+- **Civ:** not spy. Civ IV.
+- **Spy:** no access. Team Fortress 2.
+
+The mapping of these names to the owner, party, and other triplets is not yet recorded.
+ The layout follows the Linux mode
 field, so the meaning carries over directly.
 
 | Bits | Octal digit | Meaning |
