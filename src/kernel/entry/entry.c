@@ -5,6 +5,7 @@
 #include "tessera/boot/payload_run.h"
 #include "tessera/memory/ram_test.h"
 #include "tessera/memory/ram_bad_list.h"
+#include "tessera/memory/pmm.h"
 #include "tessera/console/serial_com1.h"
 #include "tessera/lib/u64_to_dec.h"
 #include "tessera/shell/serial_root.h"
@@ -58,6 +59,17 @@ void kernel_main(const struct efi_memmap *m, const uint64_t *keep, uint32_t n_ke
     serial_com1_puts("tessera: bad bytes: ");
     serial_com1_puts(num);
     serial_com1_puts("\n");
+
+    /* Page allocator over the RAM that passed the test. Bad pages are already excluded. */
+    int free_pages = pmm_init(regions, nreg);
+    if (free_pages < 0) {
+        serial_com1_puts("tessera: pmm: no usable RAM\n");
+    } else {
+        u64_to_dec((uint64_t)free_pages, num);
+        serial_com1_puts("tessera: pmm: ");
+        serial_com1_puts(num);
+        serial_com1_puts(" pages free\n");
+    }
 
     if (payload_ready) {
         uint64_t entry = payload_entry;

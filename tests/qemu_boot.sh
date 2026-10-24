@@ -30,6 +30,7 @@ for marker in \
     "tessera: leaving boot services" \
     "tessera: ram test patterns 0x42 0xBD" \
     "tessera: bad pages mapped: 0" \
+    "tessera: pmm: [0-9][0-9]* pages free" \
     "root#"
 do
     if grep -q "$marker" "$LOG"; then

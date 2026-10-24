@@ -57,6 +57,9 @@ build/test_shell: tests/host/test_shell.c $(OBJS)
 build/test_morse: tests/host/test_morse.c $(OBJS)
 	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
 
+build/test_pmm: tests/host/test_pmm.c $(OBJS)
+	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
+
 build/test_ram: tests/host/test_ram.c $(OBJS)
 	$(CC) -std=c11 -Wall -Wextra -Werror -O1 -Iinclude -o $@ $< $(TEST_OBJS)
 
@@ -64,10 +67,11 @@ build/test_ram: tests/host/test_ram.c $(OBJS)
 
 
 
-test: build/test_modload build/test_payload build/test_ram build/test_morse build/test_crash_auth build/test_shell build/test_panic build/test_sched build/test_trap
+test: build/test_modload build/test_payload build/test_ram build/test_morse build/test_crash_auth build/test_shell build/test_panic build/test_sched build/test_trap build/test_pmm
 	./build/test_modload
 	./build/test_payload
 	./build/test_ram
+	./build/test_pmm
 	./build/test_morse
 	./build/test_crash_auth
 	./build/test_shell

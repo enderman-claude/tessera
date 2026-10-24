@@ -4,7 +4,7 @@
 - [x] `boot/`: efi_main prints a line via ConOut and returns
 - [x] `boot/`: read memory map, exit boot services
 - [ ] `kernel/`: own GDT and IDT, serial console output
-- [ ] `kernel/`: physical page allocator from the memory map
+- [x] `kernel/`: physical page allocator from the memory map (`memory/pmm`, host tests and QEMU marker)
 - [ ] `kernel/`: paging and higher-half mapping
 - [ ] `kernel/`: timer interrupt and a minimal scheduler
 - [ ] `third_party/zstd`: freestanding shim so the boot stub can use it
@@ -36,7 +36,7 @@
 ## Boot RAM test (see docs/spec/ram_test.md)
 - [x] Bad-page list, pattern test, scan with kernel exclusions, bitmap apply, serial report (host tests)
 - [x] Second pattern (0xBD) to catch stuck-at-zero bits
-- [ ] Allocator calls ram_bad_apply before its first allocation
+- [x] Allocator calls ram_bad_apply before its first allocation
 - [x] Run in QEMU and check the serial report
 
 ## Panic loop (see docs/spec/panic_morse.md)
