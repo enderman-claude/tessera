@@ -39,6 +39,19 @@ A strict sandbox that allows everything a program should be able to do, and not 
   manifest already grants that scope. Requests are recorded whether granted or refused.
 - **Audited.** Every refusal is written to the audit log with the caller and the attempted object.
 
+### Towns and holidays
+- **A town is an observation boundary.** Processes in different towns cannot see each other:
+  no pids, no state, no timing, no handles across the boundary. A process in one town cannot
+  peek at a process in another.
+- **A process can take a holiday.** A process may create a new town and move itself into it,
+  with a set of grants it chooses. It controls that town: it defines what the town contains
+  and can see into it.
+- **A holiday town is no wider than its creator.** Grants given to a holiday town must be a
+  subset of what the creator holds, by the delegation rules in `capabilities.md`. A holiday
+  can never grant more than the creator has.
+- **Crossing the border is by handle only.** Anything passed in or out of a town is an
+  explicit handle, such as an endpoint, and is audited like any other grant.
+
 Town is the mode for programs whose behaviour must be bounded, and it is the one that a
 security argument can rely on. Room, by contrast, gives programs freely granted resources
 for reproducibility.
