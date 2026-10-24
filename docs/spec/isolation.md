@@ -3,55 +3,75 @@
 Status: draft for review.
 
 ## Purpose
-A program's result depends only on what it was given: its manifest, its handles, and the
-bytes it receives through them. Two runs with the same inputs produce the same outputs.
+A program's result depends only on what it was given. Two runs with the same inputs produce
+the same outputs. Isolation exists for reproducibility, so bugs reproduce and tests can be
+trusted. It is **not** a security boundary. Capability checks and the audit log
+(`capabilities.md`) remain to make violations visible. Nothing here is designed to resist a
+program that is actively trying to escape.
 
-This is **not** a security boundary. Isolation here exists so that results are reproducible,
-so that bugs reproduce, and so that tests can be trusted. Capability checks and the audit log
-(`capabilities.md`) remain, because they make violations visible. They are not required to
-resist a program that is trying to escape, and no part of this spec is designed to do so.
+## Determinism levels
+Every program runs at one of two levels, and the level is recorded with its result.
+
+| Level | What it holds | Deterministic? |
+|---|---|---|
+| **Pure** | Only stdin, stdout, and stderr. Its arguments and environment come from `exec`. | Yes. Same input, same output. |
+| **Filesystem** | Pure, plus a filesystem handle it requested at runtime. | Less so. Results depend on files outside the run. |
+
+A program starts at Pure. It moves to Filesystem only by asking for filesystem access.
 
 ## Rules
-1. **Nothing is visible by default.** A new process holds no handles except the ones its
-   spawner installs (`abi.md`). It cannot see other processes, files, devices, or endpoints
-   unless it holds a handle to them.
+1. **Nothing is visible by default.** A new process holds stdin, stdout, and stderr, and
+   nothing else. It cannot see other processes, files, devices, or endpoints.
 
-2. **Every input comes through a handle.** Anything that varies between runs is an input,
-   and must be granted explicitly:
-   - time: a `clock` handle (see below)
+2. **Stdin and stdout are the default inputs and outputs.** They are granted at start and
+   need no request. A program that only reads stdin and writes stdout stays Pure.
+
+3. **Filesystem access is requested, and granted without a prompt.** A program that needs
+   files asks for a filesystem handle at runtime. The grant is automatic: no user prompt,
+   no dialog. The asking itself is the only gate, and the program is then at the Filesystem
+   level. The request is recorded in the audit log, so the change in level is visible.
+
+4. **Every other input comes through a handle.** The following vary between runs, so each
+   is an explicit input:
+   - time: a `clock` handle (see `abi.md`)
    - random bytes: a `rand` handle (number to be assigned from the reserved range)
-   - arguments and environment: fixed by `exec`
-   - data from other programs: `endpoint` handles, and nothing else
-   - files: none yet. Any file-like access is a handle, granted by the manifest
+   - shared memory: a `mem` handle granted by a spawner
+   - messages from other programs: `endpoint` handles
 
-3. **No ambient time.** `time` is not part of the always-available `core` group. It needs a
-   `clock` handle. This changes the `abi.md` table: syscall 2 moves from `core` to `clock`.
+5. **No ambient time.** `time` is not in the always-available `core` group. It needs a
+   `clock` handle.
 
-4. **Process-local names.** Process ids and handle numbers are assigned in creation order
+6. **Process-local names.** Process ids and handle numbers are assigned in creation order
    inside each program's own view, so the same program produces the same numbers on every
-   run. A program never sees a system-wide pid. (Default, see questions.)
+   run. (Default, see questions.)
 
-5. **No shared state except by grant.** Two processes share memory only through a `mem`
-   handle that the spawner granted to both. There is no global namespace to share through.
-
-6. **Failures are visible, not silent.** A call the program does not hold is `NO_SUCH_CALL`,
-   and a refused handle is `DENIED`. Both are reported on the console or audit log so a
+7. **Failures are visible.** A call the program does not hold is `NO_SUCH_CALL`. A refused
+   handle is `DENIED`. Both are reported on the console or in the audit log, so a
    nondeterministic dependency is found, not hidden.
 
-## What this means for the spec
-- `abi.md`: `time` moves to a `clock` group and needs a clock handle.
-- `capabilities.md`: the `core` group drops `time`. The sentence "There is no ambient
-  authority" stays, and its reason is now determinism as well as security.
-- oxinit: its control socket and config are already explicit inputs, so it needs no change
-  for this rule. Services get only the fds, cwd, groups and environment their config names.
+## Filesystem access
+- Requested through a `fs` syscall group. Number reserved in the range 17-63 of `abi.md`.
+- Granted without a prompt. The grant is a handle, with no path-based opening: the program
+  receives a handle to a filesystem scope, not a global namespace.
+- Using it moves the program to the Filesystem level for the rest of its run. It cannot
+  return to Pure.
+
+## What this means for the other specs
+- `abi.md`: `time` moves to a `clock` group. Stdin, stdout, stderr are granted at `exec`,
+  not by a syscall. A `fs` group is reserved.
+- `capabilities.md`: a `fs` capability kind is added, granted by request rather than by
+  manifest. "No ambient authority" stays. Determinism is now a stated reason for it, along
+  with security.
+- oxinit: a service that only reads its stdin and writes its log is Pure. A service whose
+  config names a path it reads is Filesystem. Its level should appear in `oxictl status`.
 
 ## Questions
-1. **Process-local pids.** Should each program see its own pids from 1, or should pids be
-   global and only handle numbers be per-process? Per-process pids are fully reproducible;
-   global pids are simpler to implement.
-2. **Clock and randomness.** Should a program get a clock and a random source only when the
-   manifest asks, or should a fixed-seed, fixed-time source be the default for test runs?
-3. **Console output.** Is console writing an input-output channel that needs a handle, or a
-   sink that every program may use, since it cannot affect other programs' results?
-4. **What counts as a file.** Does this spec need a file-like handle now, or can it wait
-   until the first program needs to read a file?
+1. **Scope of a filesystem handle.** Does a grant cover the whole filesystem, or a directory
+   the program names when it asks? Narrower scope keeps results more reproducible.
+2. **Read and write.** Should a request say read-only or read-write? A read-only program
+   can still depend on files, but it cannot change them for other runs.
+3. **Level in output.** Should every result carry its level (Pure or Filesystem), so a
+   reader knows which results are reproducible? Or only the audit log?
+4. **Process-local pids.** Should pids start from 1 in each program's own view, or be global
+   with only handle numbers per-process?
+5. **Clock and randomness.** Should test runs get a fixed clock and seed by default?
