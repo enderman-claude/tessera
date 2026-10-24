@@ -39,17 +39,19 @@ A strict sandbox that allows everything a program should be able to do, and not 
   manifest already grants that scope. Requests are recorded whether granted or refused.
 - **Audited.** Every refusal is written to the audit log with the caller and the attempted object.
 
-### Root: the government
-Root is root. There is nothing above root, and root is not bound by any rule in this
-spec. Town borders, obfuscation, manifests, grants, and the modes below do not limit it.
+### Root
+Two things share the name root, and this spec treats them separately.
 
-- **Root can do everything.** It can observe any town and any program, read any process's
-  memory, write it, grant and revoke handles, stop programs, and enter or change any town.
-- **The audit log records root's actions.** It is a record of what happened, not a limit
-  on what root may do. Root's actions appear in the log like anyone else's.
-- **Determinism holds only against non-root programs.** A program's results are reproducible
-  only if no root action touches it while it runs. Root can change any result, so a
-  reproducible run requires that root does not act during it.
+- **A program running as root runs in Room.** Running as root does not change its sandbox.
+  It has no windows and its doors are unlocked, exactly as for any other Room program. Town
+  rules do not apply to it, because the Town model is not applied to root programs.
+- **The root operator is the government.** The root operator, acting through the kernel's own
+  interface, is not bound by any rule in this spec. It can observe any town or program, read
+  and write any process's memory, grant and revoke handles, stop programs, and change towns.
+  The audit log records every such action. It is a record, not a limit.
+
+Determinism holds against programs, not against the root operator. A reproducible Room run
+requires that the root operator does not act during it.
 
 ### Country records
 The country records are the one public window. They list every town and every program
