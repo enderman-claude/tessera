@@ -10,7 +10,7 @@ execute for the owner, the party, and everyone else.
 
 Name origins, as the author gave them:
 - **God:** no comment.
-- **Civ:** not spy. Civ IV.
+- **Civ:** not spy. The game Civilization.
 - **Spy:** no access. Team Fortress 2.
 
 The mapping of these names to the owner, party, and other triplets is not yet recorded.
