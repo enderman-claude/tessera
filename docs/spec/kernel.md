@@ -40,16 +40,16 @@ A strict sandbox that allows everything a program should be able to do, and not 
 - **Audited.** Every refusal is written to the audit log with the caller and the attempted object.
 
 ### Root: the government
-Root is the government. Nothing can be hidden from it.
+Root is root. There is nothing above root, and root is not bound by any rule in this
+spec. Town borders, obfuscation, manifests, grants, and the modes below do not limit it.
 
-- **Root sees everything.** Root can observe every town, the inside of every town, every
-  program, obfuscated or not, and every record. Town borders and obfuscation do not apply to root.
-- **Root can read memory.** Root can read the memory of any process, in any town, with no
-  handle needed. Memory reads are observations like any other, and are audited the same way.
-- **Every root observation is audited.** Root has no hidden access: each observation is
-  written to the audit log with the observed object, so the government's view is itself visible.
-- **Root sees, and this spec does not say more yet.** Whether root may also act inside a
-  town (grant, revoke, stop a program) is not decided here. Visibility is settled; power is not.
+- **Root can do everything.** It can observe any town and any program, read any process's
+  memory, write it, grant and revoke handles, stop programs, and enter or change any town.
+- **The audit log records root's actions.** It is a record of what happened, not a limit
+  on what root may do. Root's actions appear in the log like anyone else's.
+- **Determinism holds only against non-root programs.** A program's results are reproducible
+  only if no root action touches it while it runs. Root can change any result, so a
+  reproducible run requires that root does not act during it.
 
 ### Country records
 The country records are the one public window. They list every town and every program
