@@ -6,7 +6,11 @@ Disables interrupts and halts forever (`cli; hlt`). Used as the last step of
 stage 1 and as the response to any unrecoverable error once the kernel owns the
 machine.
 
-## Isolation
+## Sandbox modes
+The kernel runs each program in one of two sandboxes, chosen in its manifest. The
+`room` mode is described first, then `town`.
+
+### Room (determinism)
 The kernel is a sandbox for determinism, not for security. It works like a room with
 sound padding and no windows: nothing from outside is visible to a program, and no sound from
 other programs gets in. The doors are always unlocked.
@@ -23,3 +27,20 @@ other programs gets in. The doors are always unlocked.
 
 Stdin, stdout and stderr are granted at process creation. A program that holds only those
 stays at the Pure level.
+
+### Town (strict)
+A strict sandbox that allows everything a program should be able to do, and not much more.
+
+- **Exactly the grants it needs.** Every handle, syscall group and resource is named in the
+  manifest. Nothing outside the manifest is allowed, and nothing is granted on request.
+- **Checked on every call.** Each syscall is checked against the manifest before any side
+  effect. A call outside the manifest is `DENIED`, or `NO_SUCH_CALL` if the group is absent.
+- **No automatic grants.** A filesystem request from a Town program is refused unless the
+  manifest already grants that scope. Requests are recorded whether granted or refused.
+- **Audited.** Every refusal is written to the audit log with the caller and the attempted object.
+
+Town is the mode for programs whose behaviour must be bounded, and it is the one that a
+security argument can rely on. Room, by contrast, gives programs freely granted resources
+for reproducibility.
+
+Stdin, stdout and stderr are granted at process creation in both modes.
