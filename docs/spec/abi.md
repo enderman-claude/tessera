@@ -53,7 +53,7 @@ numbers are reserved, not reused.
 | 3 | fork | proc | — | child handle in parent, 0 in child (see below) |
 | 4 | exec | proc | program handle, argv ptr, envp ptr | does not return on success |
 | 5 | wait | proc | process handle | exit status |
-| 6 | kill | proc | process handle, signal | 0 |
+| 6 | kill | proc | process handle, signal | 0. A handle to PID 0 (the kernel) is accepted and ignored, see `kernel.md` |
 | 7 | getpid | proc | — | process id |
 | 8 | setsid | proc | — | 0; caller becomes leader of a new session and group |
 | 9 | close | core | handle | 0 |
