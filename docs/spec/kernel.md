@@ -44,6 +44,8 @@ Root is the government. Nothing can be hidden from it.
 
 - **Root sees everything.** Root can observe every town, the inside of every town, every
   program, obfuscated or not, and every record. Town borders and obfuscation do not apply to root.
+- **Root can read memory.** Root can read the memory of any process, in any town, with no
+  handle needed. Memory reads are observations like any other, and are audited the same way.
 - **Every root observation is audited.** Root has no hidden access: each observation is
   written to the audit log with the observed object, so the government's view is itself visible.
 - **Root sees, and this spec does not say more yet.** Whether root may also act inside a
