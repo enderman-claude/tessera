@@ -80,6 +80,15 @@ static void test_bad_page_excluded(void)
     CHECK(pmm_free_page(0x101000) == -1, "pmm: a bad page cannot be freed into the pool");
 }
 
+static void test_page_zero_never_handed_out(void)
+{
+    static const struct ram_region at_zero[] = { { 0, 2 * P } };
+    ram_bad_reset();
+    CHECK(pmm_init(at_zero, 1) == 1, "pmm: page 0 is not counted as free");
+    CHECK(pmm_alloc_page() == P, "pmm: allocation skips physical page 0");
+    CHECK(pmm_alloc_page() == 0, "pmm: after page 0, the allocator is exhausted");
+}
+
 static void test_no_ram(void)
 {
     ram_bad_reset();
@@ -92,6 +101,7 @@ int main(void)
     test_gap_never_handed_out();
     test_free_and_reuse();
     test_bad_page_excluded();
+    test_page_zero_never_handed_out();
     test_no_ram();
     if (failures) { printf("%d failure(s)\n", failures); return 1; }
     printf("PASSED (0 failures)\n");

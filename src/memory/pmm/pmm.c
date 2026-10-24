@@ -28,6 +28,11 @@ static int get_bit(const uint8_t *map, uint32_t i)
     return (map[i / 8] >> (i % 8)) & 1u;
 }
 
+static void set_bit(uint8_t *map, uint32_t i)
+{
+    map[i / 8] |= (uint8_t)(1u << (i % 8));
+}
+
 static void clear_bit(uint8_t *map, uint32_t i)
 {
     map[i / 8] &= (uint8_t)~(1u << (i % 8));
@@ -74,6 +79,12 @@ int pmm_init(const struct ram_region *regions, uint32_t n)
             clear_bit(not_usable, idx);
             clear_bit(in_use, idx);
         }
+    }
+
+    /* Physical page 0 is never handed out: pmm_alloc_page returns 0 for failure. */
+    if (base == 0 && total > 0) {
+        set_bit(not_usable, 0);
+        set_bit(in_use, 0);
     }
 
     /* Bad pages from the boot RAM test are unusable, exactly like gaps. */
