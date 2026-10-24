@@ -93,7 +93,7 @@ Stdin, stdout and stderr are granted at process creation in both modes.
 
 ## Process identity
 - **The kernel is PID 0.** It holds the PID 0 identity and is not a program in any town.
-- **The kernel ignores all signals.** A signal sent to PID 0 has no effect. The kernel does not
-  stop, pause, or terminate itself in response to a signal.
+- **Signals to PID 0 are refused.** Sending any signal to PID 0 returns `DENIED`. This holds
+  for root too, including the root operator. The kernel does not act on the signal in any way.
 - **Other PIDs start at 1.** Program ids are assigned from 1 upward. (Whether ids are
   process-local or global is an open question in `isolation.md`.)
