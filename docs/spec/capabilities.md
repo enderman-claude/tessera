@@ -25,7 +25,8 @@ Config writes, bridge windows, BAR placement and interrupt routing are not capab
 kinds at all. No driver can hold them; only L4 can ask the kernel to change them.
 
 ## Syscall groups
-- `core`: exit, yield, time. Everyone.
+- `core`: exit, yield. Everyone.
+- `clock`: read time through a clock handle. Granted by the manifest (see `isolation.md`).
 - `mem`: map and unmap own pages. L1-L8.
 - `ipc`: send, receive, reply on held endpoints. L4-L8.
 - `console`: write to the boot console. L4 and L7 by default.
