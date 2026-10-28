@@ -64,5 +64,7 @@ report with zero bad pages, and the root console prompt.
 - [shard](https://github.com/enderman-claude/shard): the binary format and loader for user programs. The kernel's SHARD loader is in the L2 layer.
 - [tesseraOS-teds](https://github.com/enderman-claude/tesseraOS-teds): the display service. It runs as an unprivileged user service over this kernel's IPC endpoints and capabilities.
 
+*Footnote: a kernel with no windows. Plenty of room, and nothing to see outside.*
+
 ## License
 Not yet chosen.
