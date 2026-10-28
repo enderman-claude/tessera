@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "ci/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install toolchain and QEMU
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc binutils make python3 qemu-system-x86 ovmf
+
+      - name: Host tests
+        run: make test
+
+      - name: Build UEFI image
+        run: make
+
+      - name: Boot under QEMU
+        run: make qemu-test
+
+      - name: Upload EFI image
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BOOTX64.EFI
+          path: build/BOOTX64.EFI
+          if-no-files-found: ignore
